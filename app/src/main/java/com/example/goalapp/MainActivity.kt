@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import com.example.goalapp.ui.GoalApp
+import com.example.goalapp.ui.GoalAppNavGraph
 import com.example.goalapp.ui.theme.GoalAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -25,26 +27,20 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainApp() {
     GoalAppTheme {
-        val navController = rememberNavController()
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colors.background
         ) {
-            Greeting("Android")
+            GoalApp()
         }
     }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     GoalAppTheme {
-        Greeting("Android")
+        MainApp()
     }
 }
