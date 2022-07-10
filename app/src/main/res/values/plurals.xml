@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="goal_length_average">
+        <item quantity="other">
+             Goal length %1$d days, average %2$.2f per day
+        </item>
+        <item quantity="one">
+            Goal length %1$d day, average %2$.2f per day
+        </item>
+    </plurals>
+    <plurals name="starts_in_days">
+        <item quantity="other">
+             starts in %d days
+        </item>
+        <item quantity="one">
+            starts in %d day
+        </item>
+    </plurals>
+    <plurals name="overdue_days">
+        <item quantity="other">
+             overdue %d days
+        </item>
+        <item quantity="one">
+            overdue %d day
+        </item>
+    </plurals>
+    <plurals name="due_in_days">
+        <item quantity="other">
+             due in %d days
+        </item>
+        <item quantity="one">
+            due in %d day
+        </item>
+    </plurals>
+</resources>
