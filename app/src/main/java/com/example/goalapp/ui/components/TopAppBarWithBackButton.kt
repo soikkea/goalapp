@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 @Composable
 fun TopAppBarWithBackButton(
     title: String,
-    onBack: () -> Unit = {}
+    onBack: () -> Unit
 ) {
     TopAppBar(
         title = { Text(text = title) },
