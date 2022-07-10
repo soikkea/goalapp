@@ -2,8 +2,9 @@ buildscript {
     ext {
 
         // App dependencies
-        compose_version = '1.1.0-beta01'
+        compose_version = '1.1.1'
         hilt_version = '2.41'
+        material_version = "1.6.1"
         navigation_version = "2.5.0"
     }
 
