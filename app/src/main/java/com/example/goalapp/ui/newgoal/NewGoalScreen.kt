@@ -77,7 +77,8 @@ fun NewGoalScreen(
                 longStartDate
             )
         },
-        onBack
+        onBack,
+        {onSaveClick(onBack)}
     )
 }
 
@@ -92,7 +93,8 @@ private fun EditGoalView(
     onStartDateClick: () -> Unit,
     endDate: LocalDate,
     onEndDateClick: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onSaveClick: () -> Unit
 ) {
     val resources = LocalContext.current.resources
     val totalDays = Duration.between(startDate.atStartOfDay(), endDate.atStartOfDay()).toDays() + 1
@@ -150,7 +152,7 @@ private fun EditGoalView(
                 )
             )
             Button(
-                onClick = { onSaveClick(onBack) },
+                onClick = onSaveClick,
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
@@ -218,7 +220,8 @@ fun DefaultPreview() {
             onGoalProgressChange = {},
             endDate = endDate,
             onStartDateClick = {},
-            startDate = startDate
+            startDate = startDate,
+            onSaveClick = {}
         )
     }
 }
