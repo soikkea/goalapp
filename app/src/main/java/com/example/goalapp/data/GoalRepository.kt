@@ -2,10 +2,11 @@ package com.example.goalapp.data
 
 import androidx.annotation.WorkerThread
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GoalRepository(private val goalDao: GoalDao) {
+class GoalRepository @Inject constructor(private val goalDao: GoalDao) {
 
     val allGoals: Flow<List<Goal>> = goalDao.getOrderedGoals()
     val allGoalsWithProgress: Flow<List<GoalWithProgress>> = goalDao.getGoalsWithProgress()
