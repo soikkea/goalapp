@@ -15,4 +15,4 @@ import java.time.LocalDate
         childColumns = arrayOf("goalId")
     )]
 )
-data class GoalProgress(val goalId: Int, val date: LocalDate, var value: Int)
+data class GoalProgress(val goalId: Long, val date: LocalDate, var value: Int)
