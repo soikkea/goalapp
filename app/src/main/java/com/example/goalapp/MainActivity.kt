@@ -15,7 +15,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.goalapp.ui.GoalApp
 import com.example.goalapp.ui.GoalAppNavGraph
 import com.example.goalapp.ui.theme.GoalAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
