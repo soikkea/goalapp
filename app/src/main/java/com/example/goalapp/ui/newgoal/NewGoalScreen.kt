@@ -26,6 +26,7 @@ import com.example.goalapp.ui.components.TopAppBarWithBackButton
 import com.example.goalapp.ui.theme.GoalAppTheme
 import com.example.goalapp.utilities.localDateTimeToLong
 import com.example.goalapp.utilities.longToLocalDateTime
+import com.example.goalapp.viewmodels.EditGoalViewModel
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -34,12 +35,10 @@ import java.time.LocalDate
 
 @Composable
 fun NewGoalScreen(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    viewModel: EditGoalViewModel
 ) {
     val activity = LocalContext.current as AppCompatActivity
-    var goalTitle by rememberSaveable {
-        mutableStateOf("")
-    }
     var goalProgress: Int? by rememberSaveable {
         mutableStateOf(null)
     }
@@ -52,33 +51,33 @@ fun NewGoalScreen(
 
     EditGoalView(
         R.string.add_goal,
-        goalTitle,
-        { title: String -> goalTitle = title },
+        viewModel.goalTitle,
+        viewModel::onTitleChanged,
         goalProgress,
         { progressString: String ->
             goalProgress = progressString.toInt()
         },
         startDate,
         {
-            val longDate = localDateTimeToLong(startDate.atStartOfDay())
+            val longDate = localDateTimeToLong(startDate.atStartOfDay(), true)
             showDatePicker(
                 activity,
                 longDate,
-                { newDate -> startDate = longToLocalDateTime(newDate).toLocalDate() })
+                { newDate -> startDate = longToLocalDateTime(newDate, true).toLocalDate() })
         },
         endDate,
         {
-            val longDate = localDateTimeToLong(endDate.atStartOfDay())
-            val longStartDate = localDateTimeToLong(startDate.atStartOfDay())
+            val longDate = localDateTimeToLong(endDate.atStartOfDay(), true)
+            val longStartDate = localDateTimeToLong(startDate.atStartOfDay(), true)
             showDatePicker(
                 activity,
                 longDate,
-                { newDate -> endDate = longToLocalDateTime(newDate).toLocalDate() },
+                { newDate -> endDate = longToLocalDateTime(newDate, true).toLocalDate() },
                 longStartDate
             )
         },
         onBack,
-        {onSaveClick(onBack)}
+        { onSaveClick(onBack) }
     )
 }
 
