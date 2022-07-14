@@ -3,6 +3,7 @@ package com.example.goalapp.di
 import android.content.Context
 import com.example.goalapp.data.GoalDao
 import com.example.goalapp.data.GoalDatabase
+import com.example.goalapp.data.GoalProgressDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,5 +24,10 @@ class DatabaseModule {
     @Provides
     fun provideGoalDao(goalDatabase: GoalDatabase): GoalDao {
         return goalDatabase.goalDao()
+    }
+
+    @Provides
+    fun provideProgressDao(goalDatabase: GoalDatabase): GoalProgressDao {
+        return goalDatabase.progressDao()
     }
 }
