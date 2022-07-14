@@ -14,6 +14,7 @@ import com.example.goalapp.ui.details.GoalDetailsScreen
 import com.example.goalapp.ui.home.HomeScreen
 import com.example.goalapp.ui.newgoal.NewGoalScreen
 import com.example.goalapp.viewmodels.EditGoalViewModel
+import com.example.goalapp.viewmodels.GoalListViewModel
 import com.example.goalapp.viewmodels.NavigationViewModel
 
 @Composable
@@ -28,17 +29,19 @@ fun GoalAppNavGraph(
         modifier = modifier
     ) {
         composable(GoalScreen.Home.name) {
+            val listViewModel = hiltViewModel<GoalListViewModel>()
             HomeScreen(
                 onFABClick = { navController.navigate(GoalScreen.NewGoal.name) },
-                onGoalClick = { goalId -> navigateToGoalDetails(navController, goalId) }
+                onGoalClick = { goalId -> navigateToGoalDetails(navController, goalId) },
+                viewModel = listViewModel
             )
         }
         composable(GoalScreen.NewGoal.name) {
             viewModel.setGoalDetailsGoalId(0L)
-            val viewModel = hiltViewModel<EditGoalViewModel>()
+            val editViewModel = hiltViewModel<EditGoalViewModel>()
             NewGoalScreen(
                 onBack = { navController.popBackStack() },
-                viewModel = viewModel
+                viewModel = editViewModel
             )
         }
         val goalDetailsName = GoalScreen.Details.name
@@ -61,7 +64,7 @@ fun GoalAppNavGraph(
 
 private fun navigateToGoalDetails(
     navController: NavController,
-    goalId: Int
+    goalId: Long
 ) {
     navController.navigate("${GoalScreen.Details.name}/$goalId")
 }
