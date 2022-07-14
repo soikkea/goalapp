@@ -1,5 +1,7 @@
 package com.example.goalapp.ui.newgoal
 
+import android.app.Activity
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
@@ -10,10 +12,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -39,23 +37,17 @@ fun NewGoalScreen(
     viewModel: EditGoalViewModel
 ) {
     val activity = LocalContext.current as AppCompatActivity
-    var goalProgress: Int? by rememberSaveable {
-        mutableStateOf(null)
-    }
-    var startDate by rememberSaveable {
-        mutableStateOf(LocalDate.now())
-    }
-    var endDate by rememberSaveable {
-        mutableStateOf(startDate.plusDays(1))
-    }
+
+    val startDate = viewModel.startDate
+    val endDate = viewModel.endDate
 
     EditGoalView(
         R.string.add_goal,
         viewModel.goalTitle,
         viewModel::onTitleChanged,
-        goalProgress,
-        { progressString: String ->
-            goalProgress = progressString.toInt()
+        viewModel.goalTarget,
+        { targetString: String ->
+            viewModel.onTargetChanged(targetString.toInt())
         },
         startDate,
         {
@@ -63,7 +55,14 @@ fun NewGoalScreen(
             showDatePicker(
                 activity,
                 longDate,
-                { newDate -> startDate = longToLocalDateTime(newDate, true).toLocalDate() })
+                { newDate ->
+                    viewModel.onStartDateChanged(
+                        longToLocalDateTime(
+                            newDate,
+                            true
+                        ).toLocalDate()
+                    )
+                })
         },
         endDate,
         {
@@ -72,12 +71,25 @@ fun NewGoalScreen(
             showDatePicker(
                 activity,
                 longDate,
-                { newDate -> endDate = longToLocalDateTime(newDate, true).toLocalDate() },
+                { newDate ->
+                    viewModel.onEndDateChanged(
+                        longToLocalDateTime(
+                            newDate,
+                            true
+                        ).toLocalDate()
+                    )
+                },
                 longStartDate
             )
         },
         onBack,
-        { onSaveClick(onBack) }
+        {
+            onSaveClick(
+                activity,
+                viewModel::saveGoal,
+                onBack
+            )
+        }
     )
 }
 
@@ -179,8 +191,17 @@ fun DateRow(
     }
 }
 
-private fun onSaveClick(onFinish: () -> Unit) {
-    // TODO
+private fun onSaveClick(
+    activity: Activity,
+    saveGoal: () -> Boolean,
+    onFinish: () -> Unit
+) {
+    // TODO: Should disable save button when input not valid
+    val saveSuccess = saveGoal()
+    if (!saveSuccess) {
+        Toast.makeText(activity.application, R.string.goal_save_failed, Toast.LENGTH_LONG).show()
+        return
+    }
     onFinish()
 }
 
@@ -200,7 +221,7 @@ private fun showDatePicker(
         .setCalendarConstraints(constraintsBuilder.build())
         .build()
     picker.show(activity!!.supportFragmentManager, picker.toString())
-    picker.addOnPositiveButtonClickListener { date -> onDateSelected(date) }
+    picker.addOnPositiveButtonClickListener { newDate -> onDateSelected(newDate) }
 }
 
 @Preview(showBackground = true)
