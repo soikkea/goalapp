@@ -4,29 +4,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.goalapp.ui.theme.GoalAppTheme
+import com.example.goalapp.data.GoalWithProgress
 
 @Composable
 fun GoalList(
     modifier: Modifier = Modifier,
-    onGoalClicked: (Int) -> Unit = {}
+    list: List<GoalWithProgress>,
+    onGoalClicked: (Long) -> Unit = {}
 ) {
-    val placeholderGoalIds = listOf<Int>(1, 2, 3)
     LazyColumn(modifier = modifier) {
-        items(items = placeholderGoalIds) { goalId ->
+        items(items = list,
+            key = { goalWP ->
+                goalWP.goal.id
+            }
+        ) { goal ->
             GoalListItem(
-                goalId = goalId,
+                goal = goal,
                 onClicked = onGoalClicked
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    GoalAppTheme {
-        GoalList()
     }
 }
