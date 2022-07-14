@@ -1,9 +1,12 @@
 package com.example.goalapp.viewmodels
 
+import android.text.TextUtils
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.*
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.goalapp.data.Goal
 import com.example.goalapp.data.GoalRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +22,8 @@ class EditGoalViewModel @Inject constructor(
 
     val goalId: Long? = savedStateHandle[GOAL_ID_SAVED_STATE_KEY]
 
+    private var goal: Goal? = null
+
     var goalTitle by mutableStateOf("")
         private set
     var goalTarget: Int? by mutableStateOf(null)
@@ -32,14 +37,64 @@ class EditGoalViewModel @Inject constructor(
         if (goalId != null && goalId > 0) {
             viewModelScope.launch {
                 goalRepository.getGoal(goalId).collect { value ->
+                    goal = value
                     goalTitle = value.title
+                    goalTarget = value.target
+                    startDate = value.startDate
+                    endDate = value.endDate
                 }
             }
         }
     }
 
+    fun getValidationStatus(): Boolean {
+        return (!TextUtils.isEmpty(goalTitle)) && (goalTarget != null && goalTarget!! > 0) && (endDate.isAfter(
+            startDate
+        ))
+    }
+
     fun onTitleChanged(title: String) {
         goalTitle = title
+    }
+
+    fun onTargetChanged(target: Int?) {
+        goalTarget = target
+    }
+
+    fun onStartDateChanged(date: LocalDate) {
+        startDate = date
+    }
+
+    fun onEndDateChanged(date: LocalDate) {
+        endDate = date
+    }
+
+    fun saveGoal(): Boolean {
+        if (!getValidationStatus()) {
+            return false
+        }
+        val target: Int = goalTarget!!
+        if (goalId != null && goalId > 0) {
+            val updatedGoal = goal!!.copy(
+                title = goalTitle,
+                startDate = startDate,
+                endDate = endDate,
+                target = target
+            )
+            updateGoal(updatedGoal)
+        } else {
+            val newGoal = Goal.create(goalTitle, startDate, endDate, target)
+            insertGoal(newGoal)
+        }
+        return true
+    }
+
+    private fun insertGoal(goal: Goal) = viewModelScope.launch {
+        goalRepository.insertGoal(goal)
+    }
+
+    private fun updateGoal(goal: Goal) = viewModelScope.launch {
+        goalRepository.updateGoal(goal)
     }
 
     companion object {
