@@ -3,7 +3,6 @@ package com.example.goalapp.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -14,14 +13,13 @@ import com.example.goalapp.ui.details.GoalDetailsScreen
 import com.example.goalapp.ui.home.HomeScreen
 import com.example.goalapp.ui.newgoal.NewGoalScreen
 import com.example.goalapp.viewmodels.EditGoalViewModel
+import com.example.goalapp.viewmodels.GoalDetailsViewModel
 import com.example.goalapp.viewmodels.GoalListViewModel
-import com.example.goalapp.viewmodels.NavigationViewModel
 
 @Composable
 fun GoalAppNavGraph(
     navController: NavHostController,
-    modifier: Modifier = Modifier,
-    viewModel: NavigationViewModel = viewModel()
+    modifier: Modifier = Modifier
 ) {
     NavHost(
         navController = navController,
@@ -37,7 +35,6 @@ fun GoalAppNavGraph(
             )
         }
         composable(GoalScreen.NewGoal.name) {
-            viewModel.setGoalDetailsGoalId(0L)
             val editViewModel = hiltViewModel<EditGoalViewModel>()
             NewGoalScreen(
                 onBack = { navController.popBackStack() },
@@ -49,14 +46,15 @@ fun GoalAppNavGraph(
             route = "$goalDetailsName/{goalId}",
             arguments = listOf(
                 navArgument("goalId") {
-                    type = NavType.IntType
+                    type = NavType.LongType
                 }
             )
         ) { entry ->
-            val goalId = entry.arguments?.getInt("goalId")
+            val detailsViewModel = hiltViewModel<GoalDetailsViewModel>()
             GoalDetailsScreen(
-                goalId = goalId!!,
-                onBack = { navController.popBackStack() })
+                onBack = { navController.popBackStack() },
+                viewModel = detailsViewModel
+            )
         }
         // TODO
     }
