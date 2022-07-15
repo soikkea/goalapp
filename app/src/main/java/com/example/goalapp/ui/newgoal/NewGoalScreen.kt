@@ -6,15 +6,21 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -93,6 +99,7 @@ fun NewGoalScreen(
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun EditGoalView(
     @StringRes topBarTitle: Int,
@@ -110,6 +117,10 @@ private fun EditGoalView(
     val resources = LocalContext.current.resources
     val totalDays = Duration.between(startDate.atStartOfDay(), endDate.atStartOfDay()).toDays() + 1
     val progressPerDay = (goalProgress ?: 0).toDouble() / totalDays.toDouble()
+    val keyBoardController = LocalSoftwareKeyboardController.current
+    val focusRequester = remember {
+        FocusRequester()
+    }
     Scaffold(
         topBar = {
             TopAppBarWithBackButton(
@@ -132,7 +143,13 @@ private fun EditGoalView(
                 onValueChange = onGoalTitleChange,
                 label = { Text(text = stringResource(id = R.string.goal_title)) },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyBoardController?.hide()
+                        focusRequester.requestFocus()
+                    }
+                )
             )
             TextField(
                 value = if (goalProgress != null) "$goalProgress" else "",
@@ -140,7 +157,12 @@ private fun EditGoalView(
                 label = { Text(text = stringResource(id = R.string.target)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().focusRequester(focusRequester),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyBoardController?.hide()
+                    }
+                )
             )
             DateRow(
                 modifier = Modifier.padding(vertical = 16.dp),
