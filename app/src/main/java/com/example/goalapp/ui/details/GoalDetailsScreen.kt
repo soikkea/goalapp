@@ -34,9 +34,16 @@ fun GoalDetailsScreen(
     val today = LocalDate.now()
     val goal by viewModel.goal.observeAsState()
     GoalDetailsScaffold(onBack, { openDialog = true }, goal, today)
-    if (openDialog) {
-        // TODO
-        //AddProgressDialog(onClose = { openDialog.value = false })
+    if (goal != null && openDialog) {
+        AddProgressDialog(
+            goalTitle = goal!!.goal.title,
+            date = today,
+            dailyTarget = goal!!.requiredDailyProgress(today),
+            oldProgressValue = goal!!.progressForDay(today),
+            onProgressValueSaved = { value -> viewModel.addProgress(today, value) },
+            targetProgress = goal!!.goal.target,
+            totalProgress = goal!!.totalProgress(),
+            onClose = { openDialog = false })
     }
 }
 
@@ -64,7 +71,7 @@ private fun GoalDetailsScaffold(
         }
     ) { contentPadding ->
         if (goal != null) {
-            GoalDetailContent(contentPadding, goal)
+            GoalDetailContent(contentPadding, goal, currentDate)
         }
     }
 }
@@ -72,8 +79,10 @@ private fun GoalDetailsScaffold(
 @Composable
 private fun GoalDetailContent(
     contentPadding: PaddingValues,
-    goal: GoalWithProgress
+    goal: GoalWithProgress,
+    date: LocalDate
 ) {
+    val totalProgress = goal.totalProgress()
     Column(modifier = Modifier.padding(contentPadding)) {
         Text(text = goal.goal.title)
         Row() {
@@ -83,6 +92,20 @@ private fun GoalDetailContent(
         Row() {
             Text(text = stringResource(id = R.string.end_date))
             Text(text = goal.goal.endDate.toString())
+        }
+        Row() {
+            Column() {
+                Text(text = stringResource(id = R.string.progress_today))
+                Text(text = "${goal.progressForDay(date) ?: 0}/${String.format("%.2f", goal.requiredDailyProgress(date))}")
+            }
+            Column() {
+                Text(text = stringResource(id = R.string.remaining))
+                Text(text = "${goal.goal.target - totalProgress}")
+            }
+            Column() {
+                Text(text = stringResource(id = R.string.total_progress))
+                Text(text = "${totalProgress}/${goal.goal.target}")
+            }
         }
     }
 }
