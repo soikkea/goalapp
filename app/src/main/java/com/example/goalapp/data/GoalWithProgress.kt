@@ -23,6 +23,10 @@ data class GoalWithProgress(
             .sumOf { progress -> progress.value }
     }
 
+    fun progressForDay(date: LocalDate): Int? {
+        return progress.find { progress -> progress.date.isEqual(date) }?.value
+    }
+
     fun totalDays(): Long {
         return Duration.between(goal.startDate.atStartOfDay(), goal.endDate.atStartOfDay()).toDays() + 1
     }

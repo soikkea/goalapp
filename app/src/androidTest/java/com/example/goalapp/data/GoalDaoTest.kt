@@ -3,6 +3,7 @@ package com.example.goalapp.data
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
@@ -21,7 +22,7 @@ class GoalDaoTest {
 
     @Before
     fun createDb() = runBlocking {
-        val context = ApplicationProvider.getApplicationContext<Context>()
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
         database = Room.inMemoryDatabaseBuilder(context, GoalDatabase::class.java).build()
         goalDao = database.goalDao()
         progressDao = database.progressDao()

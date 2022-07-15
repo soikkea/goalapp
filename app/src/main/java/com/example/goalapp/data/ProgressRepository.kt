@@ -2,10 +2,11 @@ package com.example.goalapp.data
 
 import androidx.annotation.WorkerThread
 import java.time.LocalDate
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ProgressRepository(private val progressDao: GoalProgressDao) {
+class ProgressRepository @Inject constructor (private val progressDao: GoalProgressDao) {
 
     fun getProgress(goalId: Long, date: LocalDate) =
         progressDao.getProgressForGoalAndDate(goalId, date)
