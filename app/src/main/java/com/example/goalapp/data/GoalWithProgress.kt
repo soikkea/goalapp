@@ -11,4 +11,9 @@ data class GoalWithProgress(
     )
     val progress: List<GoalProgress> = emptyList()
 ) {
+
+    fun totalProgress(): Int {
+        return progress.sumOf { progress -> progress.value }
+    }
+
 }

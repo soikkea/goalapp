@@ -1,7 +1,8 @@
 package com.example.goalapp.data
 
+import android.content.Context
 import androidx.room.Room
-import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
@@ -16,12 +17,14 @@ import java.time.LocalDate
 class GoalDaoTest {
     private lateinit var database: GoalDatabase
     private lateinit var goalDao: GoalDao
+    private lateinit var progressDao: GoalProgressDao
 
     @Before
     fun createDb() = runBlocking {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val context = ApplicationProvider.getApplicationContext<Context>()
         database = Room.inMemoryDatabaseBuilder(context, GoalDatabase::class.java).build()
         goalDao = database.goalDao()
+        progressDao = database.progressDao()
     }
 
     @After
@@ -95,8 +98,92 @@ class GoalDaoTest {
     }
 
     @Test
-    fun testGetNonExisingGoal() = runBlocking {
+    fun testGetNonExistingGoal() = runBlocking {
         val goal = goalDao.getGoal(5).first()
         assertNull(goal)
+    }
+
+    @Test
+    fun testGoalWithProgress() = runBlocking {
+        val goal = createExampleGoal("AAA", target = 100)
+        goalDao.insertGoal(goal)
+        val allGoals = goalDao.getGoalsWithProgress().first()
+        var goalWithProgress = allGoals[0]
+        assertTrue(goalWithProgress.progress.isEmpty())
+        assertEquals(0, goalWithProgress.totalProgress())
+
+        val startDate = goalWithProgress.goal.startDate
+        var progress = GoalProgress(goalWithProgress.goal.id, startDate, 5)
+        progressDao.insertProgress(progress)
+        progress = GoalProgress(goalWithProgress.goal.id, startDate.plusDays(1), 15)
+        progressDao.insertProgress(progress)
+
+        goalWithProgress = goalDao.getGoalWithProgress(goalWithProgress.goal.id).first()
+        assertTrue(goalWithProgress.progress.isNotEmpty())
+
+        assertEquals(20, goalWithProgress.totalProgress())
+    }
+
+    @Test
+    fun testDeleteGoalWithProgress() = runBlocking {
+        val goal = createExampleGoal("AAA", target = 100)
+        goalDao.insertGoal(goal)
+        val allGoals = goalDao.getGoalsWithProgress().first()
+        var goalWithProgress = allGoals[0]
+        assertTrue(goalWithProgress.progress.isEmpty())
+        assertEquals(0, goalWithProgress.totalProgress())
+
+        val startDate = goalWithProgress.goal.startDate
+        var progress = GoalProgress(goalWithProgress.goal.id, startDate, 5)
+        progressDao.insertProgress(progress)
+        progress = GoalProgress(goalWithProgress.goal.id, startDate.plusDays(1), 15)
+        progressDao.insertProgress(progress)
+
+        goalWithProgress = goalDao.getGoalWithProgress(goalWithProgress.goal.id).first()
+        assertTrue(goalWithProgress.progress.isNotEmpty())
+
+        assertEquals(20, goalWithProgress.totalProgress())
+
+        goalDao.deleteGoals(goalWithProgress.goal)
+
+        var allProgress = progressDao.getAllProgress().first()
+        assertTrue(allProgress.isEmpty())
+    }
+
+    @Test
+    fun testGoalProgressDao() = runBlocking {
+
+        val goal = createExampleGoal(target = 100)
+        val goalId = goalDao.insertGoal(goal)
+
+        val startDate = goal.startDate
+        val progress = GoalProgress(goalId, startDate, 10)
+        progressDao.insertProgress(progress)
+
+        val progress2 = progressDao.getProgressForGoalAndDate(goalId, startDate).first()
+        assertEquals(progress.date, progress2.date)
+        assertEquals(progress.goalId, progress2.goalId)
+        assertEquals(progress.value, progress2.value)
+    }
+
+    @Test
+    fun testInsertProgress() = runBlocking {
+        val goal = createExampleGoal(target = 100)
+        val goalId = goalDao.insertGoal(goal)
+
+        val startDate = goal.startDate
+        val progress = GoalProgress(goalId, startDate, 5)
+        progressDao.insertProgress(progress)
+
+        var goalWithProgress = goalDao.getGoalWithProgress(goalId).first()
+        assertEquals(5, goalWithProgress.totalProgress())
+        assertEquals(1, goalWithProgress.progress.count())
+
+        val newProgress = GoalProgress(goalId, startDate, 15)
+        progressDao.insertProgress(newProgress)
+
+        goalWithProgress = goalDao.getGoalWithProgress(goalId).first()
+        assertEquals(15, goalWithProgress.totalProgress())
+        assertEquals(1, goalWithProgress.progress.count())
     }
 }
