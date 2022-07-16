@@ -4,6 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import java.time.Duration
 import java.time.LocalDate
+import kotlin.math.ceil
 
 data class GoalWithProgress(
     @Embedded val goal: Goal,
@@ -16,6 +17,10 @@ data class GoalWithProgress(
 
     fun totalProgress(): Int {
         return progress.sumOf { progress -> progress.value }
+    }
+
+    fun completionPercentage(): Double {
+        return totalProgress().toDouble() / goal.target.toDouble()
     }
 
     fun totalProgressBeforeDate(date: LocalDate): Int {
@@ -56,6 +61,18 @@ data class GoalWithProgress(
         }
         val days = if (now.isBefore(goal.startDate)) totalDays() else daysRemaining(now)
         return missingProgress.toDouble() / days
+    }
+
+    fun expectedProgressForDay(now: LocalDate): Int {
+        if (now.isAfter(goal.endDate)) {
+            return goal.target
+        }
+        if (now.isBefore(goal.startDate)) {
+            return 0
+        }
+        val expectedDaily = goal.target.toDouble() / totalDays().toDouble()
+        val daysPassed = Duration.between(now.atStartOfDay(), goal.endDate.atStartOfDay()).toDays() + 1
+        return ceil(expectedDaily * daysPassed).toInt()
     }
 
 }
