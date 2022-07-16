@@ -13,6 +13,7 @@ import com.example.goalapp.data.GoalWithProgress
 import com.example.goalapp.ui.goallist.GoalList
 import com.example.goalapp.ui.theme.GoalAppTheme
 import com.example.goalapp.viewmodels.GoalListViewModel
+import java.time.LocalDate
 
 @Composable
 fun HomeScreen(
@@ -21,13 +22,15 @@ fun HomeScreen(
     viewModel: GoalListViewModel
 ) {
     val goals by viewModel.allGoalsWithProgress.observeAsState(emptyList())
-    HomeScreenScaffold(onFABClick, goals, onGoalClick)
+    val today = LocalDate.now()
+    HomeScreenScaffold(onFABClick, goals, today, onGoalClick)
 }
 
 @Composable
 private fun HomeScreenScaffold(
     onFABClick: () -> Unit,
     goals: List<GoalWithProgress>,
+    date: LocalDate,
     onGoalClick: (Long) -> Unit
 ) {
     Scaffold(
@@ -47,6 +50,7 @@ private fun HomeScreenScaffold(
         GoalList(
             modifier = Modifier.padding(contentPadding),
             list = goals,
+            date = date,
             onGoalClicked = onGoalClick
         )
     }
@@ -55,10 +59,12 @@ private fun HomeScreenScaffold(
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
+    val date = LocalDate.now()
     GoalAppTheme {
         HomeScreenScaffold(
             {},
             emptyList(),
+            date,
             {}
         )
     }

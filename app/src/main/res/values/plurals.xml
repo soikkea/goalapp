@@ -32,4 +32,12 @@
             due in %d day
         </item>
     </plurals>
+    <plurals name="days_remaining">
+        <item quantity="other">
+             %d days left
+        </item>
+        <item quantity="one">
+            %d day left
+        </item>
+    </plurals>
 </resources>
