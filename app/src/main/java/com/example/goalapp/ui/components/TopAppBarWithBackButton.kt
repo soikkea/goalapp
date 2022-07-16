@@ -1,5 +1,6 @@
 package com.example.goalapp.ui.components
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -11,7 +12,8 @@ import androidx.compose.runtime.Composable
 @Composable
 fun TopAppBarWithBackButton(
     title: String,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    actions: @Composable RowScope.() -> Unit = {},
 ) {
     TopAppBar(
         title = { Text(text = title) },
@@ -20,5 +22,6 @@ fun TopAppBarWithBackButton(
                 Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Go back")
             }
         },
+        actions = actions
     )
 }
