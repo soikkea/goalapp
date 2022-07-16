@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.goalapp.data.Goal
 import com.example.goalapp.data.GoalProgress
 import com.example.goalapp.data.GoalRepository
 import com.example.goalapp.data.ProgressRepository
@@ -34,7 +35,17 @@ class GoalDetailsViewModel @Inject constructor(
         }
     }
 
+    fun delete() {
+        goal.value?.let {
+            deleteGoal(it.goal)
+        }
+    }
+
     private fun insertProgress(progress: GoalProgress) = viewModelScope.launch {
         progressRepository.insertProgress(progress)
+    }
+
+    private fun deleteGoal(goal: Goal) = viewModelScope.launch {
+        goalRepository.deleteGoal(goal)
     }
 }

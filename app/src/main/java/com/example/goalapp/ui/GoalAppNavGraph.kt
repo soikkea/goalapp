@@ -53,8 +53,20 @@ fun GoalAppNavGraph(
             val detailsViewModel = hiltViewModel<GoalDetailsViewModel>()
             GoalDetailsScreen(
                 onBack = { navController.popBackStack() },
+                onEditClick = { goalId -> navigateToEditGoal(navController, goalId) },
                 viewModel = detailsViewModel
             )
+        }
+        composable(
+            route = "${GoalScreen.EditGoal.name}/{goalId}",
+            arguments = listOf(
+                navArgument("goalId") {
+                    type = NavType.LongType
+                }
+            )
+        ) { entry ->
+            val editViewModel = hiltViewModel<EditGoalViewModel>()
+            NewGoalScreen(onBack = { navController.popBackStack() }, viewModel = editViewModel)
         }
         // TODO
     }
@@ -65,4 +77,11 @@ private fun navigateToGoalDetails(
     goalId: Long
 ) {
     navController.navigate("${GoalScreen.Details.name}/$goalId")
+}
+
+private fun navigateToEditGoal(
+    navController: NavController,
+    goalId: Long
+) {
+    navController.navigate("${GoalScreen.EditGoal.name}/$goalId")
 }

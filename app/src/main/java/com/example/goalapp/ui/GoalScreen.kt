@@ -3,6 +3,7 @@ package com.example.goalapp.ui
 enum class GoalScreen {
     Home,
     NewGoal,
+    EditGoal,
     Details,
     Calendar;
 
@@ -11,6 +12,7 @@ enum class GoalScreen {
             when (route?.substringBefore("/")) {
                 Home.name -> Home
                 NewGoal.name -> NewGoal
+                EditGoal.name -> EditGoal
                 Details.name -> Details
                 Calendar.name -> Calendar
                 null -> Home
