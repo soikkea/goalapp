@@ -106,4 +106,24 @@ class GoalWithProgressTest {
         assertEquals(0.0, goal.requiredDailyProgress(startDate.plusDays(5)), delta)
         assertEquals(0.0, goal.requiredDailyProgress(startDate.plusDays(6)), delta)
     }
+
+    @Test
+    fun expectedProgressForDay() {
+        val goal = createExampleGoalWithProgress(
+            10,
+            10,
+            emptyList()
+        )
+
+        assertEquals(1, goal.expectedProgressForDay(startDate))
+        assertEquals(2, goal.expectedProgressForDay(startDate.plusDays(1)))
+        assertEquals(3, goal.expectedProgressForDay(startDate.plusDays(2)))
+        assertEquals(4, goal.expectedProgressForDay(startDate.plusDays(3)))
+        assertEquals(5, goal.expectedProgressForDay(startDate.plusDays(4)))
+        assertEquals(6, goal.expectedProgressForDay(startDate.plusDays(5)))
+        assertEquals(7, goal.expectedProgressForDay(startDate.plusDays(6)))
+        assertEquals(8, goal.expectedProgressForDay(startDate.plusDays(7)))
+        assertEquals(9, goal.expectedProgressForDay(startDate.plusDays(8)))
+        assertEquals(10, goal.expectedProgressForDay(startDate.plusDays(9)))
+    }
 }

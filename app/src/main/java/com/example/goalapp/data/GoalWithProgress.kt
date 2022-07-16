@@ -71,7 +71,7 @@ data class GoalWithProgress(
             return 0
         }
         val expectedDaily = goal.target.toDouble() / totalDays().toDouble()
-        val daysPassed = Duration.between(now.atStartOfDay(), goal.endDate.atStartOfDay()).toDays() + 1
+        val daysPassed = Duration.between(goal.startDate.atStartOfDay(), now.atStartOfDay()).toDays() + 1
         return ceil(expectedDaily * daysPassed).toInt()
     }
 
