@@ -1,6 +1,5 @@
 package com.example.goalapp.ui.goallist
 
-import android.content.res.Resources
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
@@ -14,11 +13,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.goalapp.R
 import com.example.goalapp.data.Goal
 import com.example.goalapp.data.GoalWithProgress
 import com.example.goalapp.ui.theme.GoalAppTheme
-import java.time.Duration
+import com.example.goalapp.ui.utilities.dueInText
 import java.time.LocalDate
 
 @Composable
@@ -52,30 +50,6 @@ fun GoalListItem(
             }
         }
     }
-}
-
-private fun dueInText(goal: Goal, date: LocalDate, resources: Resources): String {
-    val hasStarted = !(date.isBefore(goal.startDate))
-    val overdue = date.isAfter(goal.endDate)
-    val today = date.atStartOfDay()
-    val startDate = goal.startDate.atStartOfDay()
-    if (!hasStarted) {
-        val startsInDays = Duration.between(today, startDate).toDays()
-        return resources.getQuantityString(
-            R.plurals.starts_in_days,
-            startsInDays.toInt(), startsInDays
-        )
-    }
-    val endDate = goal.endDate.atStartOfDay()
-    if (overdue) {
-        val daysOverdue = Duration.between(endDate, today).toDays()
-        return resources.getQuantityString(R.plurals.overdue_days, daysOverdue.toInt(), daysOverdue)
-    }
-    val daysRemaining = Duration.between(today, endDate).toDays() + 1
-    return resources.getQuantityString(
-        R.plurals.days_remaining,
-        daysRemaining.toInt(), daysRemaining
-    )
 }
 
 @Composable
