@@ -53,7 +53,7 @@ fun NewGoalScreen(
         viewModel::onTitleChanged,
         viewModel.goalTarget,
         { targetString: String ->
-            viewModel.onTargetChanged(targetString.toInt())
+            viewModel.onTargetChanged(targetString.toIntOrNull())
         },
         startDate,
         {
