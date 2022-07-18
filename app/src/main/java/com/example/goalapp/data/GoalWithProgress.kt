@@ -6,6 +6,8 @@ import java.time.Duration
 import java.time.LocalDate
 import kotlin.math.ceil
 
+private const val PROGRESS_MARGIN = 0.1
+
 data class GoalWithProgress(
     @Embedded val goal: Goal,
     @Relation(
@@ -33,7 +35,8 @@ data class GoalWithProgress(
     }
 
     fun totalDays(): Long {
-        return Duration.between(goal.startDate.atStartOfDay(), goal.endDate.atStartOfDay()).toDays() + 1
+        return Duration.between(goal.startDate.atStartOfDay(), goal.endDate.atStartOfDay())
+            .toDays() + 1
     }
 
     fun daysBeforeStart(now: LocalDate): Long {
@@ -71,8 +74,79 @@ data class GoalWithProgress(
             return 0
         }
         val expectedDaily = goal.target.toDouble() / totalDays().toDouble()
-        val daysPassed = Duration.between(goal.startDate.atStartOfDay(), now.atStartOfDay()).toDays() + 1
+        val daysPassed =
+            Duration.between(goal.startDate.atStartOfDay(), now.atStartOfDay()).toDays() + 1
         return ceil(expectedDaily * daysPassed).toInt()
     }
 
+    fun isCompleted(): Boolean {
+        return totalProgress() >= goal.target
+    }
+
+    fun lastUpdated(): LocalDate? {
+        return progress.maxOfOrNull { p -> p.date }
+    }
+
+    fun getTimeStatus(now: LocalDate): TimeStatus {
+        if (now.isBefore(goal.startDate)) {
+            return TimeStatus.NOT_STARTED
+        }
+        if (now.isAfter(goal.endDate)) {
+            return TimeStatus.OVERDUE
+        }
+        return TimeStatus.ONGOING
+    }
+
+    fun getProgressStatus(now: LocalDate): ProgressStatus {
+        val timeStatus = getTimeStatus(now)
+        if (timeStatus == TimeStatus.NOT_STARTED) {
+            return if (totalProgress() > 0) {
+                ProgressStatus.EARLY
+            } else {
+                ProgressStatus.ON_TIME
+            }
+        }
+        if (timeStatus == TimeStatus.OVERDUE) {
+            return if (isCompleted()) {
+                ProgressStatus.EARLY
+            } else {
+                ProgressStatus.LATE
+            }
+        }
+        if (now.isEqual(goal.startDate) && progress.isEmpty()) {
+            return ProgressStatus.ON_TIME
+        }
+
+        val normalizedProgress = totalProgressBeforeDate(now.plusDays(1)).toDouble() / goal.target
+        // If goal has not been updated since yesterday, expect that it might still be updated today,
+        // instead of marking it late
+        val compareToDate =
+            if (now.minusDays(1) == lastUpdated()) lastUpdated()!!.atStartOfDay() else now.atStartOfDay()
+        val normalizedDays = (Duration.between(goal.startDate.atStartOfDay(), compareToDate)
+            .toDays() + 1).toDouble() / totalDays()
+
+        val normalizedFactor = normalizedProgress / normalizedDays
+
+        if (normalizedFactor > (1 + PROGRESS_MARGIN)) {
+            return ProgressStatus.EARLY
+        }
+        if (normalizedFactor < (1 - PROGRESS_MARGIN)) {
+            return ProgressStatus.LATE
+        }
+
+        return ProgressStatus.ON_TIME
+    }
+
+}
+
+enum class TimeStatus {
+    NOT_STARTED,
+    ONGOING,
+    OVERDUE;
+}
+
+enum class ProgressStatus {
+    ON_TIME,
+    LATE,
+    EARLY;
 }

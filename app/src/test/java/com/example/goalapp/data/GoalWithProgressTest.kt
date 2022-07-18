@@ -1,7 +1,6 @@
 package com.example.goalapp.data
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Test
 import java.time.LocalDate
 
@@ -27,7 +26,7 @@ class GoalWithProgressTest {
         return GoalWithProgress(createExampleGoal(totalDays, target), progress)
     }
 
-    private fun createExampleProgres(dateOffset: Long, value: Int): GoalProgress {
+    private fun createExampleProgress(dateOffset: Long, value: Int): GoalProgress {
         return GoalProgress(1, startDate.plusDays(dateOffset), value)
     }
 
@@ -37,9 +36,9 @@ class GoalWithProgressTest {
             31,
             50,
             listOf(
-                createExampleProgres(0, 1),
-                createExampleProgres(1, 2),
-                createExampleProgres(2, 3)
+                createExampleProgress(0, 1),
+                createExampleProgress(1, 2),
+                createExampleProgress(2, 3)
             )
         )
 
@@ -52,9 +51,9 @@ class GoalWithProgressTest {
             31,
             50,
             listOf(
-                createExampleProgres(0, 1),
-                createExampleProgres(1, 2),
-                createExampleProgres(2, 3)
+                createExampleProgress(0, 1),
+                createExampleProgress(1, 2),
+                createExampleProgress(2, 3)
             )
         )
 
@@ -88,11 +87,11 @@ class GoalWithProgressTest {
             10,
             10,
             listOf(
-                createExampleProgres(0, 2),
-                createExampleProgres(1, 2),
-                createExampleProgres(2, 2),
-                createExampleProgres(3, 2),
-                createExampleProgres(4, 2),
+                createExampleProgress(0, 2),
+                createExampleProgress(1, 2),
+                createExampleProgress(2, 2),
+                createExampleProgress(3, 2),
+                createExampleProgress(4, 2),
             )
         )
 
@@ -125,5 +124,55 @@ class GoalWithProgressTest {
         assertEquals(8, goal.expectedProgressForDay(startDate.plusDays(7)))
         assertEquals(9, goal.expectedProgressForDay(startDate.plusDays(8)))
         assertEquals(10, goal.expectedProgressForDay(startDate.plusDays(9)))
+    }
+
+    @Test
+    fun earlyOrLate() {
+        val progressList = mutableListOf<GoalProgress>()
+        val goal = createExampleGoalWithProgress(8, 8, progressList)
+
+        assertEquals(ProgressStatus.ON_TIME, goal.getProgressStatus(startDate))
+
+        val midDate = startDate.plusDays(3)
+        assertEquals(ProgressStatus.LATE, goal.getProgressStatus(midDate))
+
+        progressList.add(GoalProgress(1, midDate, 4))
+        assertEquals(ProgressStatus.ON_TIME, goal.getProgressStatus(midDate))
+
+        progressList[0].value = 7
+        assertEquals(ProgressStatus.EARLY, goal.getProgressStatus(midDate))
+
+        progressList.add(GoalProgress(1, goal.goal.endDate, 1))
+        assertEquals(goal.goal.target, goal.totalProgress())
+        assertEquals(ProgressStatus.ON_TIME, goal.getProgressStatus(goal.goal.endDate))
+    }
+
+    @Test
+    fun onTimeStatus() {
+        val progressList = mutableListOf<GoalProgress>()
+        val goal = createExampleGoalWithProgress(10, 1000, progressList)
+
+        assertEquals(ProgressStatus.ON_TIME, goal.getProgressStatus(startDate))
+
+        assertEquals(100.0, goal.requiredDailyProgress(startDate), 0.1)
+
+        progressList.add(GoalProgress(1, startDate, 10))
+
+        assertEquals(ProgressStatus.LATE, goal.getProgressStatus(startDate))
+
+        progressList[0].value = 100
+        assertEquals(ProgressStatus.ON_TIME, goal.getProgressStatus(startDate))
+
+        var now = startDate.plusDays(1)
+
+        assertEquals(ProgressStatus.ON_TIME, goal.getProgressStatus(now))
+
+        now = now.plusDays(1)
+
+        assertEquals(ProgressStatus.LATE, goal.getProgressStatus(now))
+
+        progressList.add(GoalProgress(1, now, 500))
+
+        assertEquals(ProgressStatus.EARLY, goal.getProgressStatus(now))
     }
 }
