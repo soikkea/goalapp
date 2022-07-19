@@ -1,10 +1,24 @@
 package com.example.goalapp.ui.utilities
 
 import android.content.res.Resources
+import androidx.compose.ui.graphics.Color
 import com.example.goalapp.R
 import com.example.goalapp.data.Goal
+import com.example.goalapp.data.ProgressStatus
 import java.time.Duration
 import java.time.LocalDate
+
+val OnTimeColor = Color.Yellow
+val LateColor = Color.Red
+val EarlyColor = Color.Green
+
+fun getProgressStatusColor(status: ProgressStatus): Color {
+    return when(status) {
+        ProgressStatus.LATE -> LateColor
+        ProgressStatus.EARLY -> EarlyColor
+        ProgressStatus.ON_TIME -> OnTimeColor
+    }
+}
 
 fun dueInText(goal: Goal, date: LocalDate, resources: Resources): String {
     val hasStarted = !(date.isBefore(goal.startDate))
