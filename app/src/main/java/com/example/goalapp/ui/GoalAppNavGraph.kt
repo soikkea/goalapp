@@ -1,6 +1,8 @@
 package com.example.goalapp.ui
 
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -21,6 +23,8 @@ fun GoalAppNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    val scaffoldState = rememberScaffoldState()
+    val scope = rememberCoroutineScope()
     NavHost(
         navController = navController,
         startDestination = GoalScreen.Home.name,
@@ -31,6 +35,7 @@ fun GoalAppNavGraph(
             HomeScreen(
                 onFABClick = { navController.navigate(GoalScreen.NewGoal.name) },
                 onGoalClick = { goalId -> navigateToGoalDetails(navController, goalId) },
+                scaffoldState = scaffoldState,
                 viewModel = listViewModel
             )
         }
@@ -54,6 +59,8 @@ fun GoalAppNavGraph(
             GoalDetailsScreen(
                 onBack = { navController.popBackStack() },
                 onEditClick = { goalId -> navigateToEditGoal(navController, goalId) },
+                scaffoldState = scaffoldState,
+                scope = scope,
                 viewModel = detailsViewModel
             )
         }

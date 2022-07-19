@@ -19,11 +19,12 @@ import java.time.LocalDate
 fun HomeScreen(
     onFABClick: () -> Unit = {},
     onGoalClick: (Long) -> Unit = {},
+    scaffoldState: ScaffoldState,
     viewModel: GoalListViewModel
 ) {
     val goals by viewModel.allGoalsWithProgress.observeAsState(emptyList())
     val today = LocalDate.now()
-    HomeScreenScaffold(onFABClick, goals, today, onGoalClick)
+    HomeScreenScaffold(onFABClick, goals, today, onGoalClick, scaffoldState)
 }
 
 @Composable
@@ -31,9 +32,11 @@ private fun HomeScreenScaffold(
     onFABClick: () -> Unit,
     goals: List<GoalWithProgress>,
     date: LocalDate,
-    onGoalClick: (Long) -> Unit
+    onGoalClick: (Long) -> Unit,
+    scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
     Scaffold(
+        scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
                 title = {
