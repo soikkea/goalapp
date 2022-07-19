@@ -22,7 +22,7 @@ data class GoalWithProgress(
     }
 
     fun completionPercentage(): Double {
-        return totalProgress().toDouble() / goal.target.toDouble()
+        return totalProgress().toDouble() / goal.target.toDouble() * 100.0
     }
 
     fun totalProgressBeforeDate(date: LocalDate): Int {
