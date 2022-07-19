@@ -35,6 +35,13 @@ class GoalDetailsViewModel @Inject constructor(
         }
     }
 
+    fun markGoalAsCompleted() {
+        goal.value?.let {
+            val updatedGoal = it.goal.copy(completed = true)
+            updateGoal(updatedGoal)
+        }
+    }
+
     fun delete() {
         goal.value?.let {
             deleteGoal(it.goal)
@@ -43,6 +50,12 @@ class GoalDetailsViewModel @Inject constructor(
 
     private fun insertProgress(progress: GoalProgress) = viewModelScope.launch {
         progressRepository.insertProgress(progress)
+    }
+
+    private fun updateGoal(goal: Goal) = viewModelScope.launch {
+        if (goal.id > 0) {
+            goalRepository.updateGoal(goal)
+        }
     }
 
     private fun deleteGoal(goal: Goal) = viewModelScope.launch {
