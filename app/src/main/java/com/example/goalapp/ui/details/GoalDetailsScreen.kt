@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.goalapp.R
@@ -171,16 +172,27 @@ private fun GoalDetailContent(
     Column(modifier = Modifier.padding(contentPadding)) {
         Text(text = goal.goal.title, style = MaterialTheme.typography.h4)
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
                 modifier = Modifier.weight(1f),
-                text = stringResource(id = R.string.start_date)
+                text = stringResource(id = R.string.start_date),
+                textAlign = TextAlign.Right
             )
-            Text(modifier = Modifier.weight(1f), text = goal.goal.startDate.toString())
+            Spacer(modifier = Modifier.weight(0.05f))
+            Text(
+                modifier = Modifier.weight(1f),
+                text = goal.goal.startDate.toString()
+            )
         }
-        Row() {
-            Text(modifier = Modifier.weight(1f), text = stringResource(id = R.string.end_date))
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                modifier = Modifier.weight(1f), text = stringResource(id = R.string.end_date),
+                textAlign = TextAlign.Right
+            )
+            Spacer(modifier = Modifier.weight(0.05f))
             Text(modifier = Modifier.weight(1f), text = goal.goal.endDate.toString())
         }
         Column(
@@ -188,36 +200,6 @@ private fun GoalDetailContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(text = dueInText(goal.goal, date, resources))
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = stringResource(id = R.string.progress_today))
-                Text(
-                    text = "${goal.progressForDay(date) ?: 0}/${
-                        String.format(
-                            "%.2f",
-                            goal.requiredDailyProgress(date)
-                        )
-                    }"
-                )
-            }
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = stringResource(id = R.string.remaining))
-                Text(text = "${goal.goal.target - totalProgress}")
-            }
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = stringResource(id = R.string.total_progress))
-                Text(text = "${totalProgress}/${goal.goal.target}")
-            }
         }
         val totalProgressNormalized = goal.totalProgress().toFloat() / goal.goal.target
         val expectedProgressNormalized =
@@ -235,6 +217,44 @@ private fun GoalDetailContent(
                         Alignment.Center
                     )
             )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.align(Alignment.Center)
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = stringResource(id = R.string.progress_today),
+                        style = MaterialTheme.typography.h5
+                    )
+                    Text(
+                        text = "${goal.progressForDay(date) ?: 0}/${
+                            String.format(
+                                "%.2f",
+                                goal.requiredDailyProgress(date)
+                            )
+                        }",
+                        style = MaterialTheme.typography.h5
+                    )
+                }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.total_progress),
+                        style = MaterialTheme.typography.h6
+                    )
+                    Text(
+                        text = "${totalProgress}/${goal.goal.target}",
+                        style = MaterialTheme.typography.h6
+                    )
+                }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = stringResource(id = R.string.remaining))
+                    Text(text = "${goal.goal.target - totalProgress}")
+                }
+            }
         }
         Column(
             modifier = Modifier.fillMaxWidth(),
