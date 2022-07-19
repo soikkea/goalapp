@@ -9,8 +9,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.goalapp.ui.theme.GoalAppTheme
 
 @Composable
-fun GoalApp() {
-    GoalAppTheme {
+fun GoalApp(
+    darkTheme: Boolean = true
+) {
+    GoalAppTheme(darkTheme = darkTheme) {
         val navController = rememberNavController()
         // A surface container using the 'background' color from the theme
         Surface(
