@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.goalapp.data.Goal
@@ -16,6 +17,7 @@ import com.example.goalapp.data.GoalProgress
 import com.example.goalapp.data.GoalWithProgress
 import com.example.goalapp.ui.theme.GoalAppTheme
 import com.example.goalapp.ui.utilities.dueInText
+import com.example.goalapp.ui.utilities.getProgressStatusColor
 import java.time.LocalDate
 
 @Composable
@@ -30,13 +32,19 @@ fun GoalListItem(
     Card(modifier = Modifier
         .fillMaxWidth()
         .clickable { onClicked(goal.goal.id) }) {
-        Row(modifier = Modifier.padding(vertical = 4.dp).height(IntrinsicSize.Max)) {
+        Row(
+            modifier = Modifier
+                .padding(vertical = 4.dp)
+                .height(IntrinsicSize.Max)
+        ) {
             if (goal.lastUpdated() == date) {
                 Column() {
-                Spacer(modifier = Modifier
-                    .width(8.dp)
-                    .fillMaxHeight()
-                    .background(color = Color.Green))
+                    Spacer(
+                        modifier = Modifier
+                            .width(8.dp)
+                            .fillMaxHeight()
+                            .background(color = Color.Green)
+                    )
                 }
             }
             Column() {
@@ -44,17 +52,33 @@ fun GoalListItem(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Column() {
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
                         Text(text = goal.goal.title, style = MaterialTheme.typography.h6)
-                        Text(text = dueInText(goal.goal, date, resources), style = MaterialTheme.typography.subtitle1)
+                        Text(
+                            text = dueInText(goal.goal, date, resources),
+                            style = MaterialTheme.typography.subtitle1
+                        )
                     }
-                    Text(text = "${String.format("%.2f", goal.completionPercentage())}%", style = MaterialTheme.typography.h4)
+                    Text(
+                        modifier = Modifier.weight(0.40f),
+                        text = "${String.format("%.1f", goal.completionPercentage())}%",
+                        style = MaterialTheme.typography.h4,
+                        textAlign = TextAlign.Right
+                    )
                 }
-                Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(16.dp)
-                    .padding(horizontal = 4.dp)) {
-                    ProgressBar(progress = progress, expected = expectedProgress)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(16.dp)
+                        .padding(horizontal = 4.dp)
+                ) {
+                    ProgressBar(
+                        progress = progress,
+                        expected = expectedProgress,
+                        getProgressStatusColor(goal.getProgressStatus(date))
+                    )
                 }
             }
         }
@@ -64,10 +88,9 @@ fun GoalListItem(
 @Composable
 fun ProgressBar(
     progress: Float,
-    expected: Float
+    expected: Float,
+    color: Color
 ) {
-    // TODO choose correct color
-    val color = Color.Green
     val backgroundColor =
         Color.Gray.copy(alpha = ProgressIndicatorDefaults.IndicatorBackgroundOpacity)
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
@@ -90,7 +113,7 @@ fun ProgressBar(
 @Composable
 fun ProgressBarPreview() {
     GoalAppTheme() {
-        ProgressBar(progress = 0.25f, expected = 0.5f)
+        ProgressBar(progress = 0.25f, expected = 0.5f, color = Color.Green)
     }
 }
 
@@ -112,6 +135,17 @@ fun PreviewGoalListItemLastUpdatedToday() {
     val goal = Goal.create("Test Goal", date, date.plusDays(7), 10)
     val progress = GoalProgress(goal.id, date, 2)
     val gwp = GoalWithProgress(goal, listOf(progress))
+    GoalAppTheme {
+        GoalListItem(goal = gwp, date = date)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewGoalListItemLongName() {
+    val date = LocalDate.now()
+    val goal = Goal.create("Test GoalAAAAAAAAAAAAAAAAAA", date, date.plusDays(7), 10)
+    val gwp = GoalWithProgress(goal, emptyList())
     GoalAppTheme {
         GoalListItem(goal = gwp, date = date)
     }
