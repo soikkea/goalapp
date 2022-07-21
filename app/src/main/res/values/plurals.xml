@@ -26,10 +26,10 @@
     </plurals>
     <plurals name="due_in_days">
         <item quantity="other">
-             due in %d days
+             Due in %d days
         </item>
         <item quantity="one">
-            due in %d day
+            Due today
         </item>
     </plurals>
     <plurals name="days_remaining">
@@ -37,7 +37,7 @@
              %d days left
         </item>
         <item quantity="one">
-            %d day left
+            Due today
         </item>
     </plurals>
 </resources>
