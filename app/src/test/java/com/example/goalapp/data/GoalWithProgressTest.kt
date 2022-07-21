@@ -175,4 +175,11 @@ class GoalWithProgressTest {
 
         assertEquals(ProgressStatus.EARLY, goal.getProgressStatus(now))
     }
+
+    @Test
+    fun progressWhenOverdue() {
+        val goal = createExampleGoalWithProgress(10, 100, emptyList())
+
+        assertEquals(100.0, goal.requiredDailyProgress(startDate.plusDays(10)), 0.01)
+    }
 }

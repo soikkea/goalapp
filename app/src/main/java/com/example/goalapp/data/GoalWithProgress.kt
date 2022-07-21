@@ -55,6 +55,9 @@ data class GoalWithProgress(
     }
 
     fun requiredDailyProgress(now: LocalDate): Double {
+        if (now.isAfter(goal.endDate)) {
+            return (goal.target - totalProgress()).toDouble()
+        }
         val missingProgress = goal.target - totalProgressBeforeDate(now)
         if (missingProgress <= 0) {
             return 0.0
