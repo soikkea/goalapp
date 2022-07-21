@@ -25,6 +25,7 @@ import com.example.goalapp.ui.components.TopAppBarWithBackButton
 import com.example.goalapp.ui.theme.GoalAppTheme
 import com.example.goalapp.ui.utilities.dueInText
 import com.example.goalapp.ui.utilities.getProgressStatusColor
+import com.example.goalapp.utilities.localDateTimeToLong
 import com.example.goalapp.viewmodels.GoalDetailsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -34,6 +35,7 @@ import java.time.LocalDate
 fun GoalDetailsScreen(
     onBack: () -> Unit,
     onEditClick: (Long) -> Unit,
+    onGoToCalendar: (Long, Long) -> Unit,
     scaffoldState: ScaffoldState,
     scope: CoroutineScope = rememberCoroutineScope(),
     viewModel: GoalDetailsViewModel
@@ -53,6 +55,7 @@ fun GoalDetailsScreen(
         openConfirmDeleteDialog = true
     }, goal, today,
         onMarkCompleted = { openConfirmMarkCompletedDialog = true },
+        onGoToCalendar = onGoToCalendar,
         scaffoldState = scaffoldState
     )
     if (goal != null && openDialog) {
@@ -121,6 +124,7 @@ private fun GoalDetailsScaffold(
     goal: GoalWithProgress?,
     currentDate: LocalDate,
     onMarkCompleted: (Long) -> Unit,
+    onGoToCalendar: (Long, Long) -> Unit,
     scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
     Scaffold(
@@ -155,7 +159,7 @@ private fun GoalDetailsScaffold(
         }
     ) { contentPadding ->
         if (goal != null) {
-            GoalDetailContent(contentPadding, goal, currentDate, onMarkCompleted)
+            GoalDetailContent(contentPadding, goal, currentDate, onMarkCompleted, onGoToCalendar)
         }
     }
 }
@@ -165,7 +169,8 @@ private fun GoalDetailContent(
     contentPadding: PaddingValues,
     goal: GoalWithProgress,
     date: LocalDate,
-    onMarkCompleted: (Long) -> Unit
+    onMarkCompleted: (Long) -> Unit,
+    onGoToCalendar: (Long, Long) -> Unit
 ) {
     val totalProgress = goal.totalProgress()
     val resources = LocalContext.current.resources
@@ -200,6 +205,14 @@ private fun GoalDetailContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(text = dueInText(goal.goal, date, resources))
+            Button(onClick = {
+                onGoToCalendar(
+                    goal.goal.id,
+                    localDateTimeToLong(date.atStartOfDay())
+                )
+            }) {
+                Text(text = stringResource(id = R.string.calendar))
+            }
         }
         val totalProgressNormalized = goal.totalProgress().toFloat() / goal.goal.target
         val expectedProgressNormalized =
@@ -289,7 +302,8 @@ fun DefaultPreview() {
             onDeleteClick = {},
             goal = gwp,
             currentDate = today,
-            onMarkCompleted = {}
+            onMarkCompleted = {},
+            onGoToCalendar = { _, _ -> }
         )
     }
 }
@@ -313,6 +327,7 @@ fun CompletedPreview() {
             goal = gwp,
             currentDate = today,
             onMarkCompleted = {},
+            onGoToCalendar = { _, _ -> }
         )
     }
 }

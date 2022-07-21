@@ -8,6 +8,7 @@ import com.example.goalapp.data.Goal
 import com.example.goalapp.data.GoalProgress
 import com.example.goalapp.data.GoalRepository
 import com.example.goalapp.data.ProgressRepository
+import com.example.goalapp.utilities.longToLocalDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -21,11 +22,15 @@ class GoalDetailsViewModel @Inject constructor(
 ) : ViewModel() {
 
     val goalId: Long = savedStateHandle.get<Long>(GOAL_DETAILS_ID_SAVED_STATE_KEY)!!
+    val calendarDate: Long? = savedStateHandle.get<Long>(CALENDAR_INITIAL_DATE)
+
+    val initialDate: LocalDate? = calendarDate?.let { longToLocalDateTime(it).toLocalDate() }
 
     val goal = goalRepository.getGoalWithProgress(goalId).asLiveData()
 
     companion object {
         const val GOAL_DETAILS_ID_SAVED_STATE_KEY = "goalId"
+        const val CALENDAR_INITIAL_DATE = "calendarDate"
     }
 
     fun addProgress(date: LocalDate, value: Int) {

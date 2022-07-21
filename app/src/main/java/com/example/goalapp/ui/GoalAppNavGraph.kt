@@ -11,6 +11,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.goalapp.ui.calendar.CalendarScreen
 import com.example.goalapp.ui.details.GoalDetailsScreen
 import com.example.goalapp.ui.home.HomeScreen
 import com.example.goalapp.ui.newgoal.NewGoalScreen
@@ -59,6 +60,13 @@ fun GoalAppNavGraph(
             GoalDetailsScreen(
                 onBack = { navController.popBackStack() },
                 onEditClick = { goalId -> navigateToEditGoal(navController, goalId) },
+                onGoToCalendar = { goalId, date ->
+                    navigateToCalendar(
+                        navController,
+                        goalId,
+                        date
+                    )
+                },
                 scaffoldState = scaffoldState,
                 scope = scope,
                 viewModel = detailsViewModel
@@ -75,7 +83,20 @@ fun GoalAppNavGraph(
             val editViewModel = hiltViewModel<EditGoalViewModel>()
             NewGoalScreen(onBack = { navController.popBackStack() }, viewModel = editViewModel)
         }
-        // TODO
+        composable(
+            route = "${GoalScreen.Calendar.name}/{goalId}/{date}",
+            arguments = listOf(
+                navArgument("goalId") {
+                    type = NavType.LongType
+                },
+                navArgument("date") {
+                    type = NavType.LongType
+                }
+            )
+        ) { entry ->
+            val calendarViewModel = hiltViewModel<GoalDetailsViewModel>()
+            CalendarScreen(onBack = { navController.popBackStack() }, viewModel = calendarViewModel)
+        }
     }
 }
 
@@ -91,4 +112,12 @@ private fun navigateToEditGoal(
     goalId: Long
 ) {
     navController.navigate("${GoalScreen.EditGoal.name}/$goalId")
+}
+
+private fun navigateToCalendar(
+    navController: NavController,
+    goalId: Long,
+    date: Long
+) {
+    navController.navigate("${GoalScreen.Calendar.name}/$goalId/$date")
 }
