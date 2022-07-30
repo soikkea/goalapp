@@ -47,7 +47,7 @@ fun AddProgressDialog(
                     progressValue = if ((newValue
                             ?: 0) + (totalProgressExcludingCurrentDate) > targetProgress
                     ) {
-                        (targetProgress - totalProgress)
+                        (targetProgress - totalProgressExcludingCurrentDate)
                     } else if (newValue == null || newValue < 0) {
                         0
                     } else {
