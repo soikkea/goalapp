@@ -53,7 +53,7 @@ fun GoalListItem(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column(
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f, fill = true)
                     ) {
                         Text(text = goal.goal.title, style = MaterialTheme.typography.h6)
                         Text(
@@ -62,10 +62,10 @@ fun GoalListItem(
                         )
                     }
                     Text(
-                        modifier = Modifier.weight(0.40f),
                         text = "${String.format("%.1f", goal.completionPercentage())}%",
                         style = MaterialTheme.typography.h4,
-                        textAlign = TextAlign.Right
+                        textAlign = TextAlign.Right,
+                        maxLines = 1
                     )
                 }
                 Box(
@@ -147,6 +147,19 @@ fun PreviewGoalListItemLongName() {
     val goal = Goal.create("Test GoalAAAAAAAAAAAAAAAAAA", date, date.plusDays(7), 10)
     val gwp = GoalWithProgress(goal, emptyList())
     GoalAppTheme {
+        GoalListItem(goal = gwp, date = date)
+    }
+}
+
+@Preview(showBackground = true, widthDp = 300)
+@Composable
+fun PreviewGoalListItemLongNameCompleted() {
+    val date = LocalDate.now()
+    val goal = Goal.create("Test GoalAAAAAAAAAAAAAAAAAA", date, date.plusDays(7), 10)
+    val gwp = GoalWithProgress(goal, listOf(
+        GoalProgress(goal.id, date, 10)
+    ))
+    GoalAppTheme(true) {
         GoalListItem(goal = gwp, date = date)
     }
 }
