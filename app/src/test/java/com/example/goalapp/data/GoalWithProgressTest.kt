@@ -144,7 +144,8 @@ class GoalWithProgressTest {
 
         progressList.add(GoalProgress(1, goal.goal.endDate, 1))
         assertEquals(goal.goal.target, goal.totalProgress())
-        assertEquals(ProgressStatus.ON_TIME, goal.getProgressStatus(goal.goal.endDate))
+        assertTrue(goal.isCompleted());
+        assertEquals(ProgressStatus.EARLY, goal.getProgressStatus(goal.goal.endDate))
     }
 
     @Test
@@ -181,5 +182,18 @@ class GoalWithProgressTest {
         val goal = createExampleGoalWithProgress(10, 100, emptyList())
 
         assertEquals(100.0, goal.requiredDailyProgress(startDate.plusDays(10)), 0.01)
+    }
+
+    @Test
+    fun progressStatusWhenCompleted() {
+        val goal = createExampleGoalWithProgress(100, 1, listOf(
+           GoalProgress(1, startDate, 1)
+        ));
+
+        assertEquals(ProgressStatus.EARLY, goal.getProgressStatus(startDate));
+        assertEquals(ProgressStatus.EARLY, goal.getProgressStatus(startDate.plusDays(5)));
+        assertEquals(ProgressStatus.EARLY, goal.getProgressStatus(goal.goal.endDate));
+        assertEquals(ProgressStatus.EARLY, goal.getProgressStatus(goal.goal.endDate.plusDays(1)));
+        assertEquals(ProgressStatus.EARLY, goal.getProgressStatus(startDate.plusDays(105)));
     }
 }

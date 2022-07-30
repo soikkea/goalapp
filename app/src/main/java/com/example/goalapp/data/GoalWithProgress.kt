@@ -119,6 +119,9 @@ data class GoalWithProgress(
         if (now.isEqual(goal.startDate) && progress.isEmpty()) {
             return ProgressStatus.ON_TIME
         }
+        if (now.isEqual(goal.endDate) && isCompleted()) {
+            return ProgressStatus.EARLY
+        }
 
         val normalizedProgress = totalProgressBeforeDate(now.plusDays(1)).toDouble() / goal.target
         // If goal has not been updated since yesterday, expect that it might still be updated today,
