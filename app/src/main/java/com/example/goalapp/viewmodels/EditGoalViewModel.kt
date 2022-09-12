@@ -48,9 +48,13 @@ class EditGoalViewModel @Inject constructor(
     }
 
     fun getValidationStatus(): Boolean {
-        return (!TextUtils.isEmpty(goalTitle)) && (goalTarget != null && goalTarget!! > 0) && (endDate.isAfter(
+        return (!TextUtils.isEmpty(getTrimmedTitle())) && (goalTarget != null && goalTarget!! > 0) && (endDate.isAfter(
             startDate
         ))
+    }
+
+    fun getTrimmedTitle(): String {
+        return goalTitle.trim()
     }
 
     fun onTitleChanged(title: String) {
@@ -76,14 +80,14 @@ class EditGoalViewModel @Inject constructor(
         val target: Int = goalTarget!!
         if (goalId != null && goalId > 0) {
             val updatedGoal = goal!!.copy(
-                title = goalTitle,
+                title = getTrimmedTitle(),
                 startDate = startDate,
                 endDate = endDate,
                 target = target
             )
             updateGoal(updatedGoal)
         } else {
-            val newGoal = Goal.create(goalTitle, startDate, endDate, target)
+            val newGoal = Goal.create(getTrimmedTitle(), startDate, endDate, target)
             insertGoal(newGoal)
         }
         return true
