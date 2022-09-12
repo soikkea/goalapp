@@ -66,10 +66,15 @@ dependencies {
 
     implementation "com.google.android.material:material:$material_version"
 
+    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
+
     // Dependency injection
     implementation "com.google.dagger:hilt-android:$rootProject.hilt_version"
     kapt "com.google.dagger:hilt-compiler:$rootProject.hilt_version"
     implementation "androidx.hilt:hilt-navigation-compose:$rootProject.hilt_navigation_version"
+
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$rootProject.hilt_version"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$rootProject.hilt_version"
 
     // AppCompat
     implementation "androidx.appcompat:appcompat:$appcompat_version"
