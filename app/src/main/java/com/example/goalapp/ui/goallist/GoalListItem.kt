@@ -38,7 +38,7 @@ fun GoalListItem(
                 .height(IntrinsicSize.Max)
         ) {
             if (goal.lastUpdated() == date) {
-                Column() {
+                Column {
                     Spacer(
                         modifier = Modifier
                             .width(8.dp)
@@ -47,7 +47,7 @@ fun GoalListItem(
                     )
                 }
             }
-            Column() {
+            Column {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -93,16 +93,20 @@ fun ProgressBar(
 ) {
     val backgroundColor =
         Color.Gray.copy(alpha = ProgressIndicatorDefaults.IndicatorBackgroundOpacity)
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomStart) {
         LinearProgressIndicator(
             progress = expected,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(10.dp),
             color = color.copy(alpha = ProgressIndicatorDefaults.IndicatorBackgroundOpacity),
             backgroundColor
         )
         LinearProgressIndicator(
             progress = progress,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp),
             color = color,
             backgroundColor = Color.Transparent
         )
@@ -112,7 +116,7 @@ fun ProgressBar(
 @Preview(showBackground = true, widthDp = 300, heightDp = 30)
 @Composable
 fun ProgressBarPreview() {
-    GoalAppTheme() {
+    GoalAppTheme {
         ProgressBar(progress = 0.25f, expected = 0.5f, color = Color.Green)
     }
 }
@@ -156,9 +160,11 @@ fun PreviewGoalListItemLongName() {
 fun PreviewGoalListItemLongNameCompleted() {
     val date = LocalDate.now()
     val goal = Goal.create("Test GoalAAAAAAAAAAAAAAAAAA", date, date.plusDays(7), 10)
-    val gwp = GoalWithProgress(goal, listOf(
-        GoalProgress(goal.id, date, 10)
-    ))
+    val gwp = GoalWithProgress(
+        goal, listOf(
+            GoalProgress(goal.id, date, 10)
+        )
+    )
     GoalAppTheme(true) {
         GoalListItem(goal = gwp, date = date)
     }
