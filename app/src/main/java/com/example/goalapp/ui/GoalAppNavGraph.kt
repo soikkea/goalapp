@@ -11,6 +11,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.goalapp.ui.about.AboutScreen
 import com.example.goalapp.ui.calendar.CalendarScreen
 import com.example.goalapp.ui.details.GoalDetailsScreen
 import com.example.goalapp.ui.home.HomeScreen
@@ -36,6 +37,7 @@ fun GoalAppNavGraph(
             HomeScreen(
                 onFABClick = { navController.navigate(GoalScreen.NewGoal.name) },
                 onGoalClick = { goalId -> navigateToGoalDetails(navController, goalId) },
+                onAboutClick = { navController.navigate(GoalScreen.About.name) },
                 scaffoldState = scaffoldState,
                 viewModel = listViewModel
             )
@@ -55,7 +57,7 @@ fun GoalAppNavGraph(
                     type = NavType.LongType
                 }
             )
-        ) { entry ->
+        ) {
             val detailsViewModel = hiltViewModel<GoalDetailsViewModel>()
             GoalDetailsScreen(
                 onBack = { navController.popBackStack() },
@@ -79,7 +81,7 @@ fun GoalAppNavGraph(
                     type = NavType.LongType
                 }
             )
-        ) { entry ->
+        ) {
             val editViewModel = hiltViewModel<EditGoalViewModel>()
             NewGoalScreen(onBack = { navController.popBackStack() }, viewModel = editViewModel)
         }
@@ -93,9 +95,16 @@ fun GoalAppNavGraph(
                     type = NavType.LongType
                 }
             )
-        ) { entry ->
+        ) {
             val calendarViewModel = hiltViewModel<GoalDetailsViewModel>()
             CalendarScreen(onBack = { navController.popBackStack() }, viewModel = calendarViewModel)
+        }
+        composable(
+            GoalScreen.About.name
+        ) {
+            AboutScreen(
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }

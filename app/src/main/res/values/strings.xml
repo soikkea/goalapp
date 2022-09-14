@@ -47,4 +47,6 @@
     <string name="progress_value">progress value</string>
     <string name="zero">0</string>
     <string name="remaining">Remaining</string>
+    <string name="about">About</string>
+    <string name="version">Version</string>
 </resources>

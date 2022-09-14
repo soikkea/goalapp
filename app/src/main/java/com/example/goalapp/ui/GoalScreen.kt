@@ -5,7 +5,8 @@ enum class GoalScreen {
     NewGoal,
     EditGoal,
     Details,
-    Calendar;
+    Calendar,
+    About;
 
     companion object {
         fun fromRoute(route: String?): GoalScreen =
@@ -15,6 +16,7 @@ enum class GoalScreen {
                 EditGoal.name -> EditGoal
                 Details.name -> Details
                 Calendar.name -> Calendar
+                About.name -> About
                 null -> Home
                 else -> throw IllegalArgumentException("Route $route is not recognized.")
             }
