@@ -1,0 +1,18 @@
+package com.github.soikkea.goalapp.data
+
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.ForeignKey.Companion.CASCADE
+import java.time.LocalDate
+
+@Entity(
+    tableName = "progress",
+    primaryKeys = ["goalId", "date"],
+    foreignKeys = [ForeignKey(
+        onDelete = CASCADE,
+        entity = Goal::class,
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("goalId")
+    )]
+)
+data class GoalProgress(val goalId: Long, val date: LocalDate, var value: Int)
