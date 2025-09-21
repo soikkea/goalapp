@@ -3,7 +3,7 @@ package com.github.soikkea.goalapp.ui.goallist
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,15 +55,15 @@ fun GoalListItem(
                     Column(
                         modifier = Modifier.weight(1f, fill = true)
                     ) {
-                        Text(text = goal.goal.title, style = MaterialTheme.typography.h6)
+                        Text(text = goal.goal.title, style = MaterialTheme.typography.titleLarge)
                         Text(
                             text = dueInText(goal.goal, date, resources),
-                            style = MaterialTheme.typography.subtitle1
+                            style = MaterialTheme.typography.titleMedium
                         )
                     }
                     Text(
                         text = "${String.format("%.1f", goal.completionPercentage())}%",
-                        style = MaterialTheme.typography.h4,
+                        style = MaterialTheme.typography.headlineMedium,
                         textAlign = TextAlign.Right,
                         maxLines = 1
                     )
@@ -85,6 +85,8 @@ fun GoalListItem(
     }
 }
 
+private const val INDICATOR_BACKGROUND_OPACITY = 0.24f
+
 @Composable
 fun ProgressBar(
     progress: Float,
@@ -92,23 +94,23 @@ fun ProgressBar(
     color: Color
 ) {
     val backgroundColor =
-        Color.Gray.copy(alpha = ProgressIndicatorDefaults.IndicatorBackgroundOpacity)
+        Color.Gray.copy(alpha = INDICATOR_BACKGROUND_OPACITY)
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomStart) {
         LinearProgressIndicator(
-            progress = expected,
+            progress = {expected},
             modifier = Modifier
                 .fillMaxWidth()
                 .height(10.dp),
-            color = color.copy(alpha = ProgressIndicatorDefaults.IndicatorBackgroundOpacity),
+            color = color.copy(alpha = INDICATOR_BACKGROUND_OPACITY),
             backgroundColor
         )
         LinearProgressIndicator(
-            progress = progress,
+            progress = {progress},
             modifier = Modifier
                 .fillMaxWidth()
                 .height(8.dp),
             color = color,
-            backgroundColor = Color.Transparent
+            trackColor = Color.Transparent
         )
     }
 }

@@ -1,7 +1,8 @@
 package com.github.soikkea.goalapp.ui
 
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,7 +26,7 @@ fun GoalAppNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     NavHost(
         navController = navController,
@@ -38,7 +39,7 @@ fun GoalAppNavGraph(
                 onFABClick = { navController.navigate(GoalScreen.NewGoal.name) },
                 onGoalClick = { goalId -> navigateToGoalDetails(navController, goalId) },
                 onAboutClick = { navController.navigate(GoalScreen.About.name) },
-                scaffoldState = scaffoldState,
+                snackBarHostState = snackbarHostState,
                 viewModel = listViewModel
             )
         }
@@ -69,7 +70,7 @@ fun GoalAppNavGraph(
                         date
                     )
                 },
-                scaffoldState = scaffoldState,
+                snackBarHostState = snackbarHostState,
                 scope = scope,
                 viewModel = detailsViewModel
             )

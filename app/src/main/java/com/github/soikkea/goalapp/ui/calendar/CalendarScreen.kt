@@ -7,6 +7,14 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -18,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.github.soikkea.goalapp.R
 import com.github.soikkea.goalapp.data.GoalWithProgress
 import com.github.soikkea.goalapp.ui.components.TopAppBarWithBackButton
 import com.github.soikkea.goalapp.ui.details.AddProgressDialog
@@ -69,7 +78,7 @@ fun CalendarScreen(
                 }
                 Text(
                     text = selectedMonth.format(monthFormatter),
-                    style = MaterialTheme.typography.h4
+                    style = MaterialTheme.typography.headlineMedium
                 )
                 IconButton(onClick = { selectedMonth = selectedMonth.plusMonths(1) }) {
                     Icon(
@@ -123,7 +132,7 @@ fun Calendar(
                 Text(
                     modifier = Modifier.weight(1f),
                     text = dayOfWeek.getDisplayName(TextStyle.NARROW, Locale.getDefault()),
-                    style = MaterialTheme.typography.h5,
+                    style = MaterialTheme.typography.headlineSmall,
                     textAlign = TextAlign.Center
                 )
             }
@@ -171,11 +180,11 @@ private fun dayCardBackgroundColor(
     endDate: LocalDate?
 ): Color {
     if (cardDate == null) {
-        return MaterialTheme.colors.background
+        return MaterialTheme.colorScheme.background
     }
     val today = LocalDate.now()
     if (cardDate == today) {
-        return MaterialTheme.colors.primaryVariant
+        return MaterialTheme.colorScheme.secondary
     }
     if (startDate != null && cardDate == startDate) {
         return Color.Blue
@@ -183,7 +192,7 @@ private fun dayCardBackgroundColor(
     if (endDate != null && cardDate == endDate) {
         return Color.Red
     }
-    return MaterialTheme.colors.background
+    return MaterialTheme.colorScheme.background
 }
 
 @Composable
@@ -191,12 +200,12 @@ fun DayCard(
     modifier: Modifier = Modifier,
     date: LocalDate? = null,
     progress: Int? = null,
-    backgroundColor: Color = MaterialTheme.colors.background,
+    backgroundColor: Color = MaterialTheme.colorScheme.background,
     onDateClicked: (LocalDate) -> Unit,
 ) {
     Card(
-        border = BorderStroke(Dp.Hairline, MaterialTheme.colors.onBackground),
-        backgroundColor = backgroundColor,
+        border = BorderStroke(Dp.Hairline, MaterialTheme.colorScheme.onBackground),
+        colors = CardDefaults.cardColors().copy(containerColor = backgroundColor),
         modifier = modifier.clickable {
             date?.let(onDateClicked)
         }
@@ -205,8 +214,8 @@ fun DayCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(2.dp)
         ) {
-            Text(text = date?.dayOfMonth?.toString() ?: "", style = MaterialTheme.typography.h6)
-            Text(text = progress?.toString() ?: "", style = MaterialTheme.typography.subtitle1)
+            Text(text = date?.dayOfMonth?.toString() ?: "", style = MaterialTheme.typography.titleLarge)
+            Text(text = progress?.toString() ?: "", style = MaterialTheme.typography.titleMedium)
         }
     }
 }

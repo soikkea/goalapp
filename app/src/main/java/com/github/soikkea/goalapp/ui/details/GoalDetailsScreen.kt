@@ -7,6 +7,18 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -16,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.github.soikkea.goalapp.R
 import com.github.soikkea.goalapp.data.Goal
 import com.github.soikkea.goalapp.data.GoalProgress
 import com.github.soikkea.goalapp.data.GoalWithProgress
@@ -35,7 +48,7 @@ fun GoalDetailsScreen(
     onBack: () -> Unit,
     onEditClick: (Long) -> Unit,
     onGoToCalendar: (Long, Long) -> Unit,
-    scaffoldState: ScaffoldState,
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
     scope: CoroutineScope = rememberCoroutineScope(),
     viewModel: GoalDetailsViewModel
 ) {
@@ -55,7 +68,7 @@ fun GoalDetailsScreen(
     }, goal, today,
         onMarkCompleted = { openConfirmMarkCompletedDialog = true },
         onGoToCalendar = onGoToCalendar,
-        scaffoldState = scaffoldState
+        snackBarHostState = snackBarHostState
     )
     if (goal != null && openDialog) {
         AddProgressDialog(
@@ -99,7 +112,7 @@ fun GoalDetailsScreen(
                 TextButton(onClick = {
                     viewModel.markGoalAsCompleted()
                     scope.launch {
-                        scaffoldState.snackbarHostState.showSnackbar(snackBarText)
+                        snackBarHostState.showSnackbar(snackBarText)
                     }
                     onBack()
                 }) {
@@ -124,10 +137,10 @@ private fun GoalDetailsScaffold(
     currentDate: LocalDate,
     onMarkCompleted: (Long) -> Unit,
     onGoToCalendar: (Long, Long) -> Unit,
-    scaffoldState: ScaffoldState = rememberScaffoldState()
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = { SnackbarHost(snackBarHostState) },
         topBar = {
             TopAppBarWithBackButton(
                 title = stringResource(id = R.string.details),
@@ -174,7 +187,7 @@ private fun GoalDetailContent(
     val totalProgress = goal.totalProgress()
     val resources = LocalContext.current.resources
     Column(modifier = Modifier.padding(contentPadding)) {
-        Text(text = goal.goal.title, style = MaterialTheme.typography.h4)
+        Text(text = goal.goal.title, style = MaterialTheme.typography.headlineMedium)
         Row(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -236,7 +249,7 @@ private fun GoalDetailContent(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = stringResource(id = R.string.progress_today),
-                        style = MaterialTheme.typography.h5
+                        style = MaterialTheme.typography.headlineSmall
                     )
                     Text(
                         text = "${goal.progressForDay(date) ?: 0}/${
@@ -245,7 +258,7 @@ private fun GoalDetailContent(
                                 goal.requiredDailyProgress(date)
                             )
                         }",
-                        style = MaterialTheme.typography.h5
+                        style = MaterialTheme.typography.headlineSmall
                     )
                 }
                 Column(
@@ -253,11 +266,11 @@ private fun GoalDetailContent(
                 ) {
                     Text(
                         text = stringResource(id = R.string.total_progress),
-                        style = MaterialTheme.typography.h6
+                        style = MaterialTheme.typography.titleLarge
                     )
                     Text(
                         text = "${totalProgress}/${goal.goal.target}",
-                        style = MaterialTheme.typography.h6
+                        style = MaterialTheme.typography.titleLarge
                     )
                 }
                 Column(

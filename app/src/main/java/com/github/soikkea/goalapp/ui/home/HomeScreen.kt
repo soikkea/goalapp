@@ -1,13 +1,16 @@
 package com.github.soikkea.goalapp.ui.home
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.*
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,14 +26,15 @@ fun HomeScreen(
     onFABClick: () -> Unit = {},
     onGoalClick: (Long) -> Unit = {},
     onAboutClick: () -> Unit,
-    scaffoldState: ScaffoldState,
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
     viewModel: GoalListViewModel
 ) {
     val goals by viewModel.allGoalsWithProgress.observeAsState(emptyList())
     val today = LocalDate.now()
-    HomeScreenScaffold(onFABClick, goals, today, onGoalClick, onAboutClick, scaffoldState)
+    HomeScreenScaffold(onFABClick, goals, today, onGoalClick, onAboutClick, snackBarHostState)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreenScaffold(
     onFABClick: () -> Unit,
@@ -38,10 +42,10 @@ private fun HomeScreenScaffold(
     date: LocalDate,
     onGoalClick: (Long) -> Unit,
     onAboutClick: () -> Unit,
-    scaffoldState: ScaffoldState = rememberScaffoldState()
+    snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     Scaffold(
-        scaffoldState = scaffoldState,
+        snackbarHost = { SnackbarHost(snackBarHostState) },
         topBar = {
             TopAppBar(
                 title = {
