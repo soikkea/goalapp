@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.serialization)
     alias(libs.plugins.kotlin.kapt)
+    id("com.google.devtools.ksp")
     alias(libs.plugins.hilt.android)
 }
 
@@ -80,8 +81,8 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.hilt.android.compiler)
     implementation(libs.androidx.runtime.livedata)
+    ksp(libs.hilt.android.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
