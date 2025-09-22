@@ -31,9 +31,6 @@ import com.github.soikkea.goalapp.ui.theme.GoalAppTheme
 import com.github.soikkea.goalapp.utilities.localDateTimeToLong
 import com.github.soikkea.goalapp.utilities.longToLocalDateTime
 import com.github.soikkea.goalapp.viewmodels.EditGoalViewModel
-import com.google.android.material.datepicker.CalendarConstraints
-import com.google.android.material.datepicker.DateValidatorPointForward
-import com.google.android.material.datepicker.MaterialDatePicker
 import java.time.Duration
 import java.time.LocalDate
 
@@ -233,17 +230,18 @@ private fun showDatePicker(
     onDateSelected: (Long) -> Unit,
     startConstraint: Long? = null
 ) {
-    val constraintsBuilder = CalendarConstraints.Builder()
-    if (startConstraint != null) {
-        constraintsBuilder.setStart(startConstraint)
-        constraintsBuilder.setValidator(DateValidatorPointForward.from(startConstraint))
-    }
-    val picker = MaterialDatePicker.Builder.datePicker()
-        .setSelection(date)
-        .setCalendarConstraints(constraintsBuilder.build())
-        .build()
-    picker.show(activity!!.supportFragmentManager, picker.toString())
-    picker.addOnPositiveButtonClickListener { newDate -> onDateSelected(newDate) }
+    // TODO: Fix this
+//    val constraintsBuilder = CalendarConstraints.Builder()
+//    if (startConstraint != null) {
+//        constraintsBuilder.setStart(startConstraint)
+//        constraintsBuilder.setValidator(DateValidatorPointForward.from(startConstraint))
+//    }
+//    val picker = MaterialDatePicker.Builder.datePicker()
+//        .setSelection(date)
+//        .setCalendarConstraints(constraintsBuilder.build())
+//        .build()
+//    picker.show(activity!!.supportFragmentManager, picker.toString())
+//    picker.addOnPositiveButtonClickListener { newDate -> onDateSelected(newDate) }
 }
 
 @Preview(showBackground = true)
