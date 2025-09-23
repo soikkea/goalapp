@@ -35,7 +35,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.github.soikkea.goalapp.CustomTestRunner"
     }
 
     buildTypes {
@@ -82,7 +82,12 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.runtime.livedata)
+    ksp(libs.androidx.room.compiler)
+    testImplementation(libs.androidx.room.testing)
+    androidTestImplementation(libs.hilt.android.testing)
+    androidTestImplementation(libs.androidx.core.testing)
     ksp(libs.hilt.android.compiler)
+    kspAndroidTest(libs.hilt.android.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
