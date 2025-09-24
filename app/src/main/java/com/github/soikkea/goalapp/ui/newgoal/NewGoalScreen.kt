@@ -1,9 +1,7 @@
 package com.github.soikkea.goalapp.ui.newgoal
 
-import android.app.Activity
-import android.widget.Toast
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -39,7 +37,7 @@ fun NewGoalScreen(
     onBack: () -> Unit,
     viewModel: EditGoalViewModel
 ) {
-    val activity = LocalContext.current as AppCompatActivity
+    val activity = LocalActivity
 
     val startDate = viewModel.startDate
     val endDate = viewModel.endDate
@@ -56,7 +54,6 @@ fun NewGoalScreen(
         {
             val longDate = localDateTimeToLong(startDate.atStartOfDay(), true)
             showDatePicker(
-                activity,
                 longDate,
                 { newDate ->
                     viewModel.onStartDateChanged(
@@ -72,7 +69,6 @@ fun NewGoalScreen(
             val longDate = localDateTimeToLong(endDate.atStartOfDay(), true)
             val longStartDate = localDateTimeToLong(startDate.atStartOfDay(), true)
             showDatePicker(
-                activity,
                 longDate,
                 { newDate ->
                     viewModel.onEndDateChanged(
@@ -88,7 +84,6 @@ fun NewGoalScreen(
         onBack,
         {
             onSaveClick(
-                activity,
                 viewModel::saveGoal,
                 onBack
             )
@@ -211,21 +206,20 @@ fun DateRow(
 }
 
 private fun onSaveClick(
-    activity: Activity,
     saveGoal: () -> Boolean,
     onFinish: () -> Unit
 ) {
     // TODO: Should disable save button when input not valid
     val saveSuccess = saveGoal()
     if (!saveSuccess) {
-        Toast.makeText(activity.application, R.string.goal_save_failed, Toast.LENGTH_LONG).show()
+        // TODO: Use snackbar
+        // Toast.makeText(activity.application, R.string.goal_save_failed, Toast.LENGTH_LONG).show()
         return
     }
     onFinish()
 }
 
 private fun showDatePicker(
-    activity: AppCompatActivity?,
     date: Long,
     onDateSelected: (Long) -> Unit,
     startConstraint: Long? = null
