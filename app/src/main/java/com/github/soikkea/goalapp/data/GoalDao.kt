@@ -18,7 +18,7 @@ interface GoalDao {
     suspend fun deleteGoals(vararg goals: Goal)
 
     @Query("SELECT * FROM goals WHERE id = :goalId")
-    fun getGoal(goalId: Long): Flow<Goal>
+    fun getGoal(goalId: Long): Flow<Goal?>
 
     @Transaction
     @Query("SELECT * FROM goals WHERE completed = 0 ORDER BY endDate ASC, createdAt ASC")

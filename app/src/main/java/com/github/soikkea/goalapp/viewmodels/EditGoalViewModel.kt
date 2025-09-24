@@ -37,11 +37,13 @@ class EditGoalViewModel @Inject constructor(
         if (goalId != null && goalId > 0) {
             viewModelScope.launch {
                 goalRepository.getGoal(goalId).collect { value ->
-                    goal = value
-                    goalTitle = value.title
-                    goalTarget = value.target
-                    startDate = value.startDate
-                    endDate = value.endDate
+                    value?.let {
+                        goal = it
+                        goalTitle = it.title
+                        goalTarget = it.target
+                        startDate = it.startDate
+                        endDate = it.endDate
+                    }
                 }
             }
         }
