@@ -11,7 +11,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -24,6 +27,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.soikkea.goalapp.R
+import com.github.soikkea.goalapp.ui.components.DatePickerModal
 import com.github.soikkea.goalapp.ui.components.TopAppBarWithBackButton
 import com.github.soikkea.goalapp.ui.theme.GoalAppTheme
 import com.github.soikkea.goalapp.utilities.localDateTimeToLong
@@ -42,6 +46,9 @@ fun NewGoalScreen(
     val startDate = viewModel.startDate
     val endDate = viewModel.endDate
 
+    var showStartDatePickerModal by remember { mutableStateOf(false) }
+    var showEndDatePickerModal by remember { mutableStateOf(false) }
+
     EditGoalView(
         R.string.add_goal,
         viewModel.goalTitle,
@@ -52,34 +59,11 @@ fun NewGoalScreen(
         },
         startDate,
         {
-            val longDate = localDateTimeToLong(startDate.atStartOfDay(), true)
-            showDatePicker(
-                longDate,
-                { newDate ->
-                    viewModel.onStartDateChanged(
-                        longToLocalDateTime(
-                            newDate,
-                            true
-                        ).toLocalDate()
-                    )
-                })
+            showStartDatePickerModal = true
         },
         endDate,
         {
-            val longDate = localDateTimeToLong(endDate.atStartOfDay(), true)
-            val longStartDate = localDateTimeToLong(startDate.atStartOfDay(), true)
-            showDatePicker(
-                longDate,
-                { newDate ->
-                    viewModel.onEndDateChanged(
-                        longToLocalDateTime(
-                            newDate,
-                            true
-                        ).toLocalDate()
-                    )
-                },
-                longStartDate
-            )
+            showEndDatePickerModal = true
         },
         onBack,
         {
@@ -89,6 +73,42 @@ fun NewGoalScreen(
             )
         }
     )
+    if (showStartDatePickerModal) {
+        val longDate = localDateTimeToLong(startDate.atStartOfDay(), true)
+        DatePickerModal(
+            longDate,
+            { newDate ->
+                newDate?.let {
+                    viewModel.onStartDateChanged(
+                        longToLocalDateTime(
+                            newDate,
+                            true
+                        ).toLocalDate()
+                    )
+                }
+            },
+            onDismiss = { showStartDatePickerModal = false }
+        )
+    }
+    if (showEndDatePickerModal) {
+        val longDate = localDateTimeToLong(endDate.atStartOfDay(), true)
+        val longStartDate = localDateTimeToLong(startDate.atStartOfDay(), true)
+        DatePickerModal(
+            longDate,
+            {
+                it?.let {
+                    viewModel.onEndDateChanged(
+                        longToLocalDateTime(
+                            it,
+                            true
+                        ).toLocalDate()
+                    )
+                }
+            },
+            onDismiss = { showEndDatePickerModal = false },
+            startConstraintUtcMillis = longStartDate
+        )
+    }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -149,7 +169,9 @@ private fun EditGoalView(
                 label = { Text(text = stringResource(id = R.string.target)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth().focusRequester(focusRequester),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
                 keyboardActions = KeyboardActions(
                     onDone = {
                         keyBoardController?.hide()
@@ -217,25 +239,6 @@ private fun onSaveClick(
         return
     }
     onFinish()
-}
-
-private fun showDatePicker(
-    date: Long,
-    onDateSelected: (Long) -> Unit,
-    startConstraint: Long? = null
-) {
-    // TODO: Fix this
-//    val constraintsBuilder = CalendarConstraints.Builder()
-//    if (startConstraint != null) {
-//        constraintsBuilder.setStart(startConstraint)
-//        constraintsBuilder.setValidator(DateValidatorPointForward.from(startConstraint))
-//    }
-//    val picker = MaterialDatePicker.Builder.datePicker()
-//        .setSelection(date)
-//        .setCalendarConstraints(constraintsBuilder.build())
-//        .build()
-//    picker.show(activity!!.supportFragmentManager, picker.toString())
-//    picker.addOnPositiveButtonClickListener { newDate -> onDateSelected(newDate) }
 }
 
 @Preview(showBackground = true)
