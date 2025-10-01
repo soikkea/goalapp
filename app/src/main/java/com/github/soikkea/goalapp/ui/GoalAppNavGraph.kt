@@ -47,7 +47,8 @@ fun GoalAppNavGraph(
             val editViewModel = hiltViewModel<EditGoalViewModel>()
             NewGoalScreen(
                 onBack = { navController.popBackStack() },
-                viewModel = editViewModel
+                viewModel = editViewModel,
+                snackbarHostState = snackbarHostState
             )
         }
         val goalDetailsName = GoalScreen.Details.name
@@ -84,7 +85,7 @@ fun GoalAppNavGraph(
             )
         ) {
             val editViewModel = hiltViewModel<EditGoalViewModel>()
-            NewGoalScreen(onBack = { navController.popBackStack() }, viewModel = editViewModel)
+            NewGoalScreen(onBack = { navController.popBackStack() }, viewModel = editViewModel, snackbarHostState)
         }
         composable(
             route = "${GoalScreen.Calendar.name}/{goalId}/{date}",
