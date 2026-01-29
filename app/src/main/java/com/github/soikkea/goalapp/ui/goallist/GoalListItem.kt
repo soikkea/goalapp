@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -19,6 +18,8 @@ import com.github.soikkea.goalapp.ui.theme.GoalAppTheme
 import com.github.soikkea.goalapp.ui.utilities.dueInText
 import com.github.soikkea.goalapp.ui.utilities.getProgressStatusColor
 import java.time.LocalDate
+import androidx.compose.ui.platform.LocalResources
+import java.util.Locale
 
 @Composable
 fun GoalListItem(
@@ -26,7 +27,7 @@ fun GoalListItem(
     date: LocalDate,
     onClicked: (Long) -> Unit = {}
 ) {
-    val resources = LocalContext.current.resources
+    val resources = LocalResources.current
     val progress = goal.totalProgress().toFloat() / goal.goal.target
     val expectedProgress = goal.expectedProgressForDay(date).toFloat() / goal.goal.target
     Card(modifier = Modifier
@@ -62,7 +63,7 @@ fun GoalListItem(
                         )
                     }
                     Text(
-                        text = "${String.format("%.1f", goal.completionPercentage())}%",
+                        text = "${String.format(Locale.getDefault(),"%.1f", goal.completionPercentage())}%",
                         style = MaterialTheme.typography.headlineMedium,
                         textAlign = TextAlign.Right,
                         maxLines = 1
@@ -102,7 +103,9 @@ fun ProgressBar(
                 .fillMaxWidth()
                 .height(10.dp),
             color = color.copy(alpha = INDICATOR_BACKGROUND_OPACITY),
-            backgroundColor
+            backgroundColor,
+            drawStopIndicator = {},
+            gapSize = 0.dp,
         )
         LinearProgressIndicator(
             progress = {progress},
@@ -110,7 +113,8 @@ fun ProgressBar(
                 .fillMaxWidth()
                 .height(8.dp),
             color = color,
-            trackColor = Color.Transparent
+            trackColor = Color.Transparent,
+            drawStopIndicator = {}
         )
     }
 }
