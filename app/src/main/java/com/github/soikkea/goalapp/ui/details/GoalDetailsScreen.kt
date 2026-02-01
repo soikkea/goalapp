@@ -1,12 +1,6 @@
 package com.github.soikkea.goalapp.ui.details
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -24,6 +18,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -148,13 +143,13 @@ private fun GoalDetailsScaffold(
                 actions = {
                     IconButton(onClick = { onEditClick(goal!!.goal.id) }) {
                         Icon(
-                            Icons.Filled.Edit,
+                            painterResource(R.drawable.edit_24px),
                             contentDescription = stringResource(id = R.string.edit)
                         )
                     }
                     IconButton(onClick = { onDeleteClick(goal!!.goal.id) }) {
                         Icon(
-                            Icons.Filled.Delete,
+                            painterResource(R.drawable.delete_24px),
                             contentDescription = stringResource(id = R.string.delete_goal)
                         )
                     }
@@ -164,7 +159,7 @@ private fun GoalDetailsScaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = onFABClick) {
                 Icon(
-                    Icons.Default.Add,
+                    painterResource(R.drawable.add_24px),
                     contentDescription = stringResource(id = R.string.add_progress)
                 )
             }
@@ -288,7 +283,7 @@ private fun GoalDetailContent(
             if (goal.isCompleted()) {
                 Button(onClick = { onMarkCompleted(goal.goal.id) }) {
                     Icon(
-                        Icons.Filled.Check,
+                        painterResource(R.drawable.check_24px),
                         contentDescription = null,
                         modifier = Modifier.size(ButtonDefaults.IconSize)
                     )
@@ -306,7 +301,7 @@ fun DefaultPreview() {
     val today = LocalDate.of(2022, 7, 1)
     val goal = Goal.create("Test Goal", today, today.plusDays(6), 7)
     val gwp = GoalWithProgress(goal, emptyList())
-    GoalAppTheme {
+    GoalAppTheme(darkTheme = true) {
         GoalDetailsScaffold(
             onBack = {},
             onFABClick = {},
@@ -330,7 +325,7 @@ fun CompletedPreview() {
             GoalProgress(0L, today, 1)
         )
     )
-    GoalAppTheme {
+    GoalAppTheme(darkTheme = true) {
         GoalDetailsScaffold(
             onBack = {},
             onFABClick = {},

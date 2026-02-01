@@ -1,9 +1,6 @@
 package com.github.soikkea.goalapp.ui.home
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -12,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.github.soikkea.goalapp.R
@@ -54,7 +52,7 @@ private fun HomeScreenScaffold(
                 actions = {
                     IconButton(onClick = { onAboutClick() }) {
                         Icon(
-                            Icons.Filled.Info,
+                            painterResource(R.drawable.info_24px),
                             contentDescription = stringResource(id = R.string.about)
                         )
                     }
@@ -63,7 +61,7 @@ private fun HomeScreenScaffold(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onFABClick) {
-                Icon(Icons.Default.Add, contentDescription = "Add new goal")
+                Icon(painterResource(R.drawable.add_24px), contentDescription = "Add new goal")
             }
         }
     ) { contentPadding ->

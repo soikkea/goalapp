@@ -3,12 +3,7 @@ package com.github.soikkea.goalapp.ui.calendar
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,6 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -72,7 +68,7 @@ fun CalendarScreen(
             ) {
                 IconButton(onClick = { selectedMonth = selectedMonth.minusMonths(1) }) {
                     Icon(
-                        Icons.Default.ArrowBack,
+                        painterResource(R.drawable.arrow_back_24px),
                         contentDescription = stringResource(R.string.previous_arrow)
                     )
                 }
@@ -82,7 +78,7 @@ fun CalendarScreen(
                 )
                 IconButton(onClick = { selectedMonth = selectedMonth.plusMonths(1) }) {
                     Icon(
-                        Icons.Default.ArrowForward,
+                        painterResource(R.drawable.arrow_forward_24px),
                         contentDescription = stringResource(R.string.next_arrow)
                     )
                 }
