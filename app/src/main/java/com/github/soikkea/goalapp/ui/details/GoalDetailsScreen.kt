@@ -17,7 +17,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -37,6 +36,8 @@ import com.github.soikkea.goalapp.viewmodels.GoalDetailsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import androidx.compose.ui.platform.LocalResources
+import java.util.Locale
 
 @Composable
 fun GoalDetailsScreen(
@@ -180,7 +181,7 @@ private fun GoalDetailContent(
     onGoToCalendar: (Long, Long) -> Unit
 ) {
     val totalProgress = goal.totalProgress()
-    val resources = LocalContext.current.resources
+    val resources = LocalResources.current
     Column(modifier = Modifier.padding(contentPadding)) {
         Text(text = goal.goal.title, style = MaterialTheme.typography.headlineMedium)
         Row(
@@ -249,6 +250,7 @@ private fun GoalDetailContent(
                     Text(
                         text = "${goal.progressForDay(date) ?: 0}/${
                             String.format(
+                                Locale.getDefault(),
                                 "%.2f",
                                 goal.requiredDailyProgress(date)
                             )
