@@ -8,10 +8,10 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.github.soikkea.goalapp.MainCoroutineRule
 import com.github.soikkea.goalapp.data.GoalDatabase
 import com.github.soikkea.goalapp.data.GoalRepository
-import com.github.soikkea.goalapp.runBlockingTest
 import com.github.soikkea.goalapp.utilities.getValue
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.test.runTest
 import org.junit.*
 import org.junit.Assert.*
 import org.junit.rules.RuleChain
@@ -44,10 +44,10 @@ class EditGoalViewModelTest {
     }
 
     @Test
-    fun testTrimmedTitle() = coroutineRule.runBlockingTest {
-        val savedStateHandle: SavedStateHandle = SavedStateHandle()
+    fun testTrimmedTitle() = runTest {
+        val savedStateHandle = SavedStateHandle()
 
-        val viewModel: EditGoalViewModel = EditGoalViewModel(savedStateHandle, goalRepository)
+        val viewModel = EditGoalViewModel(savedStateHandle, goalRepository)
 
         assertFalse(viewModel.getValidationStatus())
 
