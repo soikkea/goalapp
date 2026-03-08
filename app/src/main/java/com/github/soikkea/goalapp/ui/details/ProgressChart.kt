@@ -17,6 +17,7 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
 import com.patrykandpatrick.vico.compose.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.compose.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.compose.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
@@ -25,6 +26,7 @@ import com.patrykandpatrick.vico.compose.m3.common.rememberM3VicoTheme
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import java.time.Month
+import java.time.format.DateTimeFormatter
 import kotlin.collections.set
 
 data class ChartData(
@@ -53,7 +55,21 @@ data class ChartData(
             )
         }
     }
+
+    suspend fun toLineSeries(modelProducer: CartesianChartModelProducer) {
+        val guideX = listOf(startDate, endDate).map { it.toEpochDay() }
+        val guideY = listOf(startValue, goalValue)
+        modelProducer.runTransaction {
+            lineSeries {
+                series(guideX, guideY)
+                series(progressData.keys.map { it.toEpochDay() }, progressData.values)
+            }
+        }
+    }
 }
+
+private val BottomAxisValueFormatter =
+    CartesianValueFormatter { _, value, _ -> LocalDate.ofEpochDay(value.toLong()).format(DateTimeFormatter.ofPattern("d.M")) }
 
 @Composable
 private fun ProgressChart(
@@ -68,7 +84,8 @@ private fun ProgressChart(
                 label = rememberAxisLabelComponent(style = TextStyle(color = theme.textColor ))
             ),
             bottomAxis = HorizontalAxis.rememberBottom(
-                label = rememberAxisLabelComponent(style = TextStyle(color = theme.textColor ))
+                label = rememberAxisLabelComponent(style = TextStyle(color = theme.textColor )),
+                valueFormatter = BottomAxisValueFormatter
             )
         ),
         modelProducer,
@@ -84,9 +101,7 @@ fun ProgressChart(
 ) {
     val modelProducer = remember { CartesianChartModelProducer() }
     LaunchedEffect(Unit) {
-        modelProducer.runTransaction {
-            lineSeries { series(0, 2, 3) }
-        }
+        data.toLineSeries(modelProducer)
     }
     ProgressChart(modelProducer, modifier)
 }
@@ -100,47 +115,19 @@ private fun ProgressChartPreview() {
         0,
         50,
         mapOf(
-            LocalDate.of(2026, Month.JANUARY, 1) to 5,
-            LocalDate.of(2026, Month.FEBRUARY, 20) to 10,
-            LocalDate.of(2026, Month.MARCH, 12) to 7,
+            LocalDate.of(2026, Month.JANUARY, 1) to 0,
+            LocalDate.of(2026, Month.JANUARY, 5) to 5,
+            LocalDate.of(2026, Month.FEBRUARY, 20) to 15,
+            LocalDate.of(2026, Month.MARCH, 12) to 33,
         )
     )
     val modelProducer = remember { CartesianChartModelProducer() }
     runBlocking {
-        modelProducer.runTransaction {
-            lineSeries { series(0, 2, 3) }
-        }
+        previewData.toLineSeries(modelProducer)
     }
     GoalAppTheme(darkTheme = true) {
         Box(modifier = Modifier.padding(16.dp)) {
             ProgressChart(modelProducer)
-        }
-    }
-}
-
-@Composable
-@Preview
-private fun ProgressChartPreview_withData() {
-    val previewData = ChartData(
-        LocalDate.of(2026, Month.JANUARY, 1),
-        LocalDate.of(2026, Month.APRIL, 1),
-        0,
-        50,
-        mapOf(
-            LocalDate.of(2026, Month.JANUARY, 1) to 5,
-            LocalDate.of(2026, Month.FEBRUARY, 20) to 15,
-            LocalDate.of(2026, Month.MARCH, 12) to 23,
-        )
-    )
-    val modelProducer = remember { CartesianChartModelProducer() }
-    runBlocking {
-        modelProducer.runTransaction {
-            lineSeries { series(0, 2, 3) }
-        }
-    }
-    GoalAppTheme(darkTheme = true) {
-        Box(modifier = Modifier.padding(16.dp)) {
-            ProgressChart(previewData)
         }
     }
 }
