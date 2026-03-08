@@ -294,7 +294,7 @@ private fun GoalDetailContent(
                 }
             }
         }
-        ProgressChart()
+        ProgressChart(ChartData.fromGoalWithProgress(goal))
     }
 }
 
