@@ -133,7 +133,7 @@ fun ProgressChart(
     data: ChartData, modifier: Modifier = Modifier
 ) {
     val modelProducer = remember { CartesianChartModelProducer() }
-    LaunchedEffect(Unit) {
+    LaunchedEffect(data) {
         data.toLineSeriesTransaction(modelProducer)
     }
     ProgressChart(modelProducer, modifier)
