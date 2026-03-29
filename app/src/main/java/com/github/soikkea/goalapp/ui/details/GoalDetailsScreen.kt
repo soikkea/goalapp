@@ -1,6 +1,16 @@
 package com.github.soikkea.goalapp.ui.details
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -13,10 +23,16 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -36,7 +52,6 @@ import com.github.soikkea.goalapp.viewmodels.GoalDetailsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import androidx.compose.ui.platform.LocalResources
 import java.util.Locale
 
 @Composable
@@ -59,7 +74,8 @@ fun GoalDetailsScreen(
     }
     val today = LocalDate.now()
     val goal by viewModel.goal.observeAsState()
-    GoalDetailsScaffold(onBack, { openDialog = true }, onEditClick, {
+    GoalDetailsScaffold(
+        onBack, { openDialog = true }, onEditClick, {
         openConfirmDeleteDialog = true
     }, goal, today,
         onMarkCompleted = { openConfirmMarkCompletedDialog = true },
@@ -78,7 +94,8 @@ fun GoalDetailsScreen(
             onClose = { openDialog = false })
     }
     if (openConfirmDeleteDialog) {
-        AlertDialog(onDismissRequest = { openConfirmDeleteDialog = false },
+        AlertDialog(
+            onDismissRequest = { openConfirmDeleteDialog = false },
             title = { Text(text = stringResource(id = R.string.delete_goal)) },
             text = {
                 Text(text = stringResource(id = R.string.confirm_delete))
@@ -98,7 +115,8 @@ fun GoalDetailsScreen(
             })
     }
     if (openConfirmMarkCompletedDialog) {
-        AlertDialog(onDismissRequest = { openConfirmMarkCompletedDialog = false },
+        AlertDialog(
+            onDismissRequest = { openConfirmMarkCompletedDialog = false },
             title = { Text(text = stringResource(id = R.string.mark_completed)) },
             text = {
                 Text(text = stringResource(id = R.string.are_you_sure))
@@ -182,7 +200,9 @@ private fun GoalDetailContent(
 ) {
     val totalProgress = goal.totalProgress()
     val resources = LocalResources.current
-    Column(modifier = Modifier.padding(contentPadding)) {
+    Column(modifier = Modifier
+        .padding(contentPadding)
+        .verticalScroll(rememberScrollState())) {
         Text(text = goal.goal.title, style = MaterialTheme.typography.headlineMedium)
         Row(
             modifier = Modifier.fillMaxWidth()
@@ -295,6 +315,9 @@ private fun GoalDetailContent(
             }
         }
         ProgressChart(ChartData.fromGoalWithProgress(goal))
+        Box(Modifier
+            .fillMaxWidth()
+            .padding(36.dp))
     }
 }
 
