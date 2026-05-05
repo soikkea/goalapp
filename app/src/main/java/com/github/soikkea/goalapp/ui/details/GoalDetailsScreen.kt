@@ -314,7 +314,7 @@ private fun GoalDetailContent(
                 }
             }
         }
-        ProgressChart(ChartData.fromGoalWithProgress(goal))
+        ProgressChart(ChartData.fromGoalWithProgress(goal, date))
         Box(Modifier
             .fillMaxWidth()
             .padding(36.dp))
@@ -327,6 +327,32 @@ fun DefaultPreview() {
     val today = LocalDate.of(2022, 7, 1)
     val goal = Goal.create("Test Goal", today, today.plusDays(6), 7)
     val gwp = GoalWithProgress(goal, emptyList())
+    GoalAppTheme(darkTheme = true) {
+        GoalDetailsScaffold(
+            onBack = {},
+            onFABClick = {},
+            onEditClick = {},
+            onDeleteClick = {},
+            goal = gwp,
+            currentDate = today,
+            onMarkCompleted = {},
+            onGoToCalendar = { _, _ -> }
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MiddlePreview() {
+    val startDate = LocalDate.of(2022, 7, 1)
+    val goal = Goal.create("Test Goal", startDate, startDate.plusDays(6), 7)
+    val gwp = GoalWithProgress(
+        goal, listOf(
+            GoalProgress(0L, startDate, 1),
+            GoalProgress(0L, startDate.plusDays(2), 3)
+        )
+    )
+    val today = startDate.plusDays(3)
     GoalAppTheme(darkTheme = true) {
         GoalDetailsScaffold(
             onBack = {},

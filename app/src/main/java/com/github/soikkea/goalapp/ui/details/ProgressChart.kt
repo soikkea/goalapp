@@ -35,6 +35,7 @@ import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import java.time.Month
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 data class ChartData(
     val startDate: LocalDate,
@@ -44,14 +45,23 @@ data class ChartData(
     val progressData: Map<LocalDate, Int>
 ) {
     companion object {
-        fun fromGoalWithProgress(goal: GoalWithProgress): ChartData {
+        fun fromGoalWithProgress(goal: GoalWithProgress, today: LocalDate): ChartData {
             var total = 0
             val cumSumProgress = mutableMapOf<LocalDate, Int>()
             cumSumProgress[goal.goal.startDate] = 0
             val sortedProgress = goal.progress.sortedBy { it.date }
-            for (progress in sortedProgress) {
-                total += progress.value
-                cumSumProgress[progress.date] = total
+            val startDate =
+                sortedProgress.map { it.date }.firstOrNull() ?: goal.goal.startDate
+            val inclusiveEnd = ChronoUnit.DAYS.between(startDate, today).plus(1)
+            val progressIterator = sortedProgress.iterator()
+            var currentProgress = if (progressIterator.hasNext()) progressIterator.next() else null
+            (0 until inclusiveEnd).forEach { i ->
+                val date = startDate.plusDays(i)
+                if (currentProgress != null && currentProgress.date == date) {
+                    total += currentProgress.value
+                    currentProgress = if (progressIterator.hasNext()) progressIterator.next() else null
+                }
+                cumSumProgress[date] = total
             }
             return ChartData(
                 goal.goal.startDate, goal.goal.endDate, 0, goal.goal.target, cumSumProgress
